@@ -1,0 +1,4648 @@
+Terminals unused in grammar
+
+    STRUCT
+    MAIN
+    ENDIF
+    func_identifier
+    leftshift_assignment_operator
+    rightshift_assignment_operator
+    XOR_assignment_operator
+    OR_assignment_operator
+    AND_assignment_operator
+    pipe_operator
+    caret_operator
+    amp_operator
+    leftshift_operator
+    rightshift_operator
+    SIZEOF
+    tilde_operator
+
+
+State 170 conflicts: 1 reduce/reduce
+State 224 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: declaration_list
+
+    2 declaration_list: declaration D
+
+    3 D: declaration_list
+    4  | %empty
+
+    5 declaration: variable_declaration
+    6            | function_declaration
+
+    7 variable_declaration: type_specifier variable_declaration_list ';'
+
+    8 variable_declaration_list: variable_declaration_list ',' variable_declaration_identifier
+    9                          | variable_declaration_identifier
+
+   10 $@1: %empty
+
+   11 variable_declaration_identifier: identifier $@1 vdi
+
+   12 $@2: %empty
+
+   13 variable_declaration_identifier: array_identifier $@2 vdi
+
+   14 vdi: identifier_array_type
+   15    | assignment_operator simple_expression
+
+   16 identifier_array_type: '[' initilization_params
+   17                      | %empty
+
+   18 $@3: %empty
+
+   19 initilization_params: integer_constant $@3 ']' initilization
+   20                     | ']' string_initilization
+
+   21 initilization: string_initilization
+   22              | array_initialization
+   23              | %empty
+
+   24 type_specifier: INT
+   25               | CHAR
+   26               | FLOAT
+   27               | DOUBLE
+   28               | LONG long_grammar
+   29               | SHORT short_grammar
+   30               | UNSIGNED unsigned_grammar
+   31               | SIGNED signed_grammar
+   32               | VOID
+
+   33 unsigned_grammar: INT
+   34                 | LONG long_grammar
+   35                 | SHORT short_grammar
+   36                 | %empty
+
+   37 signed_grammar: INT
+   38               | LONG long_grammar
+   39               | SHORT short_grammar
+   40               | %empty
+
+   41 long_grammar: INT
+   42             | %empty
+
+   43 short_grammar: INT
+   44              | %empty
+
+   45 function_declaration: function_declaration_type function_declaration_param_statement
+
+   46 function_declaration_type: type_specifier identifier '('
+
+   47 $@4: %empty
+
+   48 $@5: %empty
+
+   49 function_declaration_param_statement: $@4 params ')' $@5 statement
+
+   50 params: parameters_list
+   51       | %empty
+
+   52 $@6: %empty
+
+   53 parameters_list: type_specifier $@6 parameters_identifier_list
+
+   54 parameters_identifier_list: param_identifier parameters_identifier_list_breakup
+
+   55 parameters_identifier_list_breakup: ',' parameters_list
+   56                                   | %empty
+
+   57 $@7: %empty
+
+   58 param_identifier: identifier $@7 param_identifier_breakup
+
+   59 param_identifier_breakup: '[' ']'
+   60                         | %empty
+
+   61 statement: expression_statment
+   62          | compound_statement
+   63          | conditional_statements
+   64          | iterative_statements
+   65          | return_statement
+   66          | break_statement
+   67          | variable_declaration
+
+   68 $@8: %empty
+
+   69 compound_statement: $@8 '{' statment_list '}'
+
+   70 statment_list: statement statment_list
+   71              | %empty
+
+   72 expression_statment: expression ';'
+   73                    | ';'
+
+   74 $@9: %empty
+
+   75 $@10: %empty
+
+   76 conditional_statements: IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+
+   77 conditional_statements_breakup: ELSE statement
+   78                               | %empty
+
+   79 $@11: %empty
+
+   80 $@12: %empty
+
+   81 iterative_statements: WHILE '(' $@11 simple_expression ')' $@12 statement
+
+   82 $@13: %empty
+
+   83 $@14: %empty
+
+   84 iterative_statements: FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+
+   85 $@15: %empty
+
+   86 $@16: %empty
+
+   87 iterative_statements: $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+
+   88 return_statement: RETURN ';'
+   89                 | RETURN expression ';'
+
+   90 break_statement: BREAK ';'
+
+   91 string_initilization: assignment_operator string_constant
+
+   92 array_initialization: assignment_operator '{' array_int_declarations '}'
+
+   93 $@17: %empty
+
+   94 array_int_declarations: integer_constant $@17 array_int_declarations_breakup
+
+   95 array_int_declarations_breakup: ',' array_int_declarations
+   96                               | %empty
+
+   97 $@18: %empty
+
+   98 expression: mutable assignment_operator $@18 expression
+
+   99 $@19: %empty
+
+  100 expression: mutable addition_assignment_operator $@19 expression
+
+  101 $@20: %empty
+
+  102 expression: mutable subtraction_assignment_operator $@20 expression
+
+  103 $@21: %empty
+
+  104 expression: mutable multiplication_assignment_operator $@21 expression
+
+  105 $@22: %empty
+
+  106 expression: mutable division_assignment_operator $@22 expression
+
+  107 @23: %empty
+
+  108 expression: mutable modulo_assignment_operator @23 expression
+  109           | mutable increment_operator
+  110           | mutable decrement_operator
+  111           | simple_expression
+
+  112 $@24: %empty
+
+  113 simple_expression: simple_expression OR_operator and_expression $@24
+  114                  | and_expression
+
+  115 @25: %empty
+
+  116 and_expression: and_expression AND_operator @25 unary_relation_expression
+  117               | unary_relation_expression
+
+  118 @26: %empty
+
+  119 unary_relation_expression: exclamation_operator @26 unary_relation_expression
+  120                          | regular_expression
+
+  121 regular_expression: regular_expression relational_operators sum_expression
+  122                   | sum_expression
+
+  123 relational_operators: greaterthan_assignment_operator
+  124                     | lessthan_assignment_operator
+  125                     | greaterthan_operator
+  126                     | lessthan_operator
+  127                     | equality_operator
+  128                     | inequality_operator
+
+  129 sum_expression: sum_expression sum_operators term
+  130               | term
+
+  131 sum_operators: add_operator
+  132              | subtract_operator
+
+  133 term: term MULOP factor
+  134     | factor
+
+  135 MULOP: multiplication_operator
+  136      | division_operator
+  137      | modulo_operator
+
+  138 factor: immutable
+  139       | mutable
+
+  140 mutable: identifier
+
+  141 $@27: %empty
+
+  142 mutable: array_identifier $@27 '[' index ']'
+
+  143 index: sum_expression
+  144      | integer_constant
+
+  145 immutable: '(' expression ')'
+  146          | call
+  147          | constant
+
+  148 @28: %empty
+
+  149 call: identifier '(' @28 arguments ')'
+
+  150 arguments: arguments_list
+  151          | %empty
+
+  152 arguments_list: arguments_list ',' exp
+  153               | exp
+
+  154 exp: identifier
+  155    | integer_constant
+  156    | string_constant
+  157    | float_constant
+  158    | character_constant
+
+  159 constant: integer_constant
+  160         | string_constant
+  161         | float_constant
+  162         | character_constant
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 46 76 81 84 87 145 149
+    ')' (41) 49 76 81 84 87 145 149
+    ',' (44) 8 55 95 152
+    ';' (59) 7 72 73 84 87 88 89 90
+    '[' (91) 16 59 142
+    ']' (93) 19 20 59 142
+    '{' (123) 69 92
+    '}' (125) 69 92
+    error (256)
+    IF (258) 76
+    INT (259) 24 33 37 41 43
+    CHAR (260) 25
+    FLOAT (261) 26
+    DOUBLE (262) 27
+    LONG (263) 28 34 38
+    SHORT (264) 29 35 39
+    SIGNED (265) 31
+    UNSIGNED (266) 30
+    STRUCT (267)
+    RETURN (268) 88 89
+    MAIN (269)
+    VOID (270) 32
+    WHILE (271) 81 87
+    FOR (272) 84
+    DO (273) 87
+    BREAK (274) 90
+    ENDIF (275)
+    identifier (276) 11 46 58 140 149 154
+    array_identifier (277) 13 142
+    func_identifier (278)
+    integer_constant (279) 19 94 144 155 159
+    string_constant (280) 91 156 160
+    float_constant (281) 157 161
+    character_constant (282) 158 162
+    ELSE (283) 77
+    leftshift_assignment_operator (284)
+    rightshift_assignment_operator (285)
+    XOR_assignment_operator (286)
+    OR_assignment_operator (287)
+    AND_assignment_operator (288)
+    modulo_assignment_operator (289) 108
+    multiplication_assignment_operator (290) 104
+    division_assignment_operator (291) 106
+    addition_assignment_operator (292) 100
+    subtraction_assignment_operator (293) 102
+    assignment_operator (294) 15 91 92 98
+    OR_operator (295) 113
+    AND_operator (296) 116
+    pipe_operator (297)
+    caret_operator (298)
+    amp_operator (299)
+    equality_operator (300) 127
+    inequality_operator (301) 128
+    lessthan_assignment_operator (302) 124
+    lessthan_operator (303) 126
+    greaterthan_assignment_operator (304) 123
+    greaterthan_operator (305) 125
+    leftshift_operator (306)
+    rightshift_operator (307)
+    add_operator (308) 131
+    subtract_operator (309) 132
+    multiplication_operator (310) 135
+    division_operator (311) 136
+    modulo_operator (312) 137
+    SIZEOF (313)
+    tilde_operator (314)
+    exclamation_operator (315) 119
+    increment_operator (316) 109
+    decrement_operator (317) 110
+
+
+Nonterminals, with rules where they appear
+
+    $accept (71)
+        on left: 0
+    program (72)
+        on left: 1
+        on right: 0
+    declaration_list (73)
+        on left: 2
+        on right: 1 3
+    D (74)
+        on left: 3 4
+        on right: 2
+    declaration (75)
+        on left: 5 6
+        on right: 2
+    variable_declaration (76)
+        on left: 7
+        on right: 5 67
+    variable_declaration_list (77)
+        on left: 8 9
+        on right: 7 8
+    variable_declaration_identifier (78)
+        on left: 11 13
+        on right: 8 9
+    $@1 (79)
+        on left: 10
+        on right: 11
+    $@2 (80)
+        on left: 12
+        on right: 13
+    vdi (81)
+        on left: 14 15
+        on right: 11 13
+    identifier_array_type (82)
+        on left: 16 17
+        on right: 14
+    initilization_params (83)
+        on left: 19 20
+        on right: 16
+    $@3 (84)
+        on left: 18
+        on right: 19
+    initilization (85)
+        on left: 21 22 23
+        on right: 19
+    type_specifier (86)
+        on left: 24 25 26 27 28 29 30 31 32
+        on right: 7 46 53
+    unsigned_grammar (87)
+        on left: 33 34 35 36
+        on right: 30
+    signed_grammar (88)
+        on left: 37 38 39 40
+        on right: 31
+    long_grammar (89)
+        on left: 41 42
+        on right: 28 34 38
+    short_grammar (90)
+        on left: 43 44
+        on right: 29 35 39
+    function_declaration (91)
+        on left: 45
+        on right: 6
+    function_declaration_type (92)
+        on left: 46
+        on right: 45
+    function_declaration_param_statement (93)
+        on left: 49
+        on right: 45
+    $@4 (94)
+        on left: 47
+        on right: 49
+    $@5 (95)
+        on left: 48
+        on right: 49
+    params (96)
+        on left: 50 51
+        on right: 49
+    parameters_list (97)
+        on left: 53
+        on right: 50 55
+    $@6 (98)
+        on left: 52
+        on right: 53
+    parameters_identifier_list (99)
+        on left: 54
+        on right: 53
+    parameters_identifier_list_breakup (100)
+        on left: 55 56
+        on right: 54
+    param_identifier (101)
+        on left: 58
+        on right: 54
+    $@7 (102)
+        on left: 57
+        on right: 58
+    param_identifier_breakup (103)
+        on left: 59 60
+        on right: 58
+    statement (104)
+        on left: 61 62 63 64 65 66 67
+        on right: 49 70 76 77 81 84 87
+    compound_statement (105)
+        on left: 69
+        on right: 62
+    $@8 (106)
+        on left: 68
+        on right: 69
+    statment_list (107)
+        on left: 70 71
+        on right: 69 70
+    expression_statment (108)
+        on left: 72 73
+        on right: 61
+    conditional_statements (109)
+        on left: 76
+        on right: 63
+    $@9 (110)
+        on left: 74
+        on right: 76
+    $@10 (111)
+        on left: 75
+        on right: 76
+    conditional_statements_breakup (112)
+        on left: 77 78
+        on right: 76
+    iterative_statements (113)
+        on left: 81 84 87
+        on right: 64
+    $@11 (114)
+        on left: 79
+        on right: 81
+    $@12 (115)
+        on left: 80
+        on right: 81
+    $@13 (116)
+        on left: 82
+        on right: 84
+    $@14 (117)
+        on left: 83
+        on right: 84
+    $@15 (118)
+        on left: 85
+        on right: 87
+    $@16 (119)
+        on left: 86
+        on right: 87
+    return_statement (120)
+        on left: 88 89
+        on right: 65
+    break_statement (121)
+        on left: 90
+        on right: 66
+    string_initilization (122)
+        on left: 91
+        on right: 20 21
+    array_initialization (123)
+        on left: 92
+        on right: 22
+    array_int_declarations (124)
+        on left: 94
+        on right: 92 95
+    $@17 (125)
+        on left: 93
+        on right: 94
+    array_int_declarations_breakup (126)
+        on left: 95 96
+        on right: 94
+    expression (127)
+        on left: 98 100 102 104 106 108 109 110 111
+        on right: 72 84 89 98 100 102 104 106 108 145
+    $@18 (128)
+        on left: 97
+        on right: 98
+    $@19 (129)
+        on left: 99
+        on right: 100
+    $@20 (130)
+        on left: 101
+        on right: 102
+    $@21 (131)
+        on left: 103
+        on right: 104
+    $@22 (132)
+        on left: 105
+        on right: 106
+    @23 (133)
+        on left: 107
+        on right: 108
+    simple_expression (134)
+        on left: 113 114
+        on right: 15 76 81 84 87 111 113
+    $@24 (135)
+        on left: 112
+        on right: 113
+    and_expression (136)
+        on left: 116 117
+        on right: 113 114 116
+    @25 (137)
+        on left: 115
+        on right: 116
+    unary_relation_expression (138)
+        on left: 119 120
+        on right: 116 117 119
+    @26 (139)
+        on left: 118
+        on right: 119
+    regular_expression (140)
+        on left: 121 122
+        on right: 120 121
+    relational_operators (141)
+        on left: 123 124 125 126 127 128
+        on right: 121
+    sum_expression (142)
+        on left: 129 130
+        on right: 121 122 129 143
+    sum_operators (143)
+        on left: 131 132
+        on right: 129
+    term (144)
+        on left: 133 134
+        on right: 129 130 133
+    MULOP (145)
+        on left: 135 136 137
+        on right: 133
+    factor (146)
+        on left: 138 139
+        on right: 133 134
+    mutable (147)
+        on left: 140 142
+        on right: 98 100 102 104 106 108 109 110 139
+    $@27 (148)
+        on left: 141
+        on right: 142
+    index (149)
+        on left: 143 144
+        on right: 142
+    immutable (150)
+        on left: 145 146 147
+        on right: 138
+    call (151)
+        on left: 149
+        on right: 146
+    @28 (152)
+        on left: 148
+        on right: 149
+    arguments (153)
+        on left: 150 151
+        on right: 149
+    arguments_list (154)
+        on left: 152 153
+        on right: 150 152
+    exp (155)
+        on left: 154 155 156 157 158
+        on right: 152 153
+    constant (156)
+        on left: 159 160 161 162
+        on right: 147
+
+
+State 0
+
+    0 $accept: . program $end
+    1 program: . declaration_list
+    2 declaration_list: . declaration D
+    5 declaration: . variable_declaration
+    6            | . function_declaration
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   45 function_declaration: . function_declaration_type function_declaration_param_statement
+   46 function_declaration_type: . type_specifier identifier '('
+
+    INT       shift, and go to state 1
+    CHAR      shift, and go to state 2
+    FLOAT     shift, and go to state 3
+    DOUBLE    shift, and go to state 4
+    LONG      shift, and go to state 5
+    SHORT     shift, and go to state 6
+    SIGNED    shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    VOID      shift, and go to state 9
+
+    program                    go to state 10
+    declaration_list           go to state 11
+    declaration                go to state 12
+    variable_declaration       go to state 13
+    type_specifier             go to state 14
+    function_declaration       go to state 15
+    function_declaration_type  go to state 16
+
+
+State 1
+
+   24 type_specifier: INT .
+
+    $default  reduce using rule 24 (type_specifier)
+
+
+State 2
+
+   25 type_specifier: CHAR .
+
+    $default  reduce using rule 25 (type_specifier)
+
+
+State 3
+
+   26 type_specifier: FLOAT .
+
+    $default  reduce using rule 26 (type_specifier)
+
+
+State 4
+
+   27 type_specifier: DOUBLE .
+
+    $default  reduce using rule 27 (type_specifier)
+
+
+State 5
+
+   28 type_specifier: LONG . long_grammar
+   41 long_grammar: . INT
+   42             | . %empty  [identifier, array_identifier]
+
+    INT  shift, and go to state 17
+
+    $default  reduce using rule 42 (long_grammar)
+
+    long_grammar  go to state 18
+
+
+State 6
+
+   29 type_specifier: SHORT . short_grammar
+   43 short_grammar: . INT
+   44              | . %empty  [identifier, array_identifier]
+
+    INT  shift, and go to state 19
+
+    $default  reduce using rule 44 (short_grammar)
+
+    short_grammar  go to state 20
+
+
+State 7
+
+   31 type_specifier: SIGNED . signed_grammar
+   37 signed_grammar: . INT
+   38               | . LONG long_grammar
+   39               | . SHORT short_grammar
+   40               | . %empty  [identifier, array_identifier]
+
+    INT    shift, and go to state 21
+    LONG   shift, and go to state 22
+    SHORT  shift, and go to state 23
+
+    $default  reduce using rule 40 (signed_grammar)
+
+    signed_grammar  go to state 24
+
+
+State 8
+
+   30 type_specifier: UNSIGNED . unsigned_grammar
+   33 unsigned_grammar: . INT
+   34                 | . LONG long_grammar
+   35                 | . SHORT short_grammar
+   36                 | . %empty  [identifier, array_identifier]
+
+    INT    shift, and go to state 25
+    LONG   shift, and go to state 26
+    SHORT  shift, and go to state 27
+
+    $default  reduce using rule 36 (unsigned_grammar)
+
+    unsigned_grammar  go to state 28
+
+
+State 9
+
+   32 type_specifier: VOID .
+
+    $default  reduce using rule 32 (type_specifier)
+
+
+State 10
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 29
+
+
+State 11
+
+    1 program: declaration_list .
+
+    $default  reduce using rule 1 (program)
+
+
+State 12
+
+    2 declaration_list: . declaration D
+    2                 | declaration . D
+    3 D: . declaration_list
+    4  | . %empty  [$end]
+    5 declaration: . variable_declaration
+    6            | . function_declaration
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   45 function_declaration: . function_declaration_type function_declaration_param_statement
+   46 function_declaration_type: . type_specifier identifier '('
+
+    INT       shift, and go to state 1
+    CHAR      shift, and go to state 2
+    FLOAT     shift, and go to state 3
+    DOUBLE    shift, and go to state 4
+    LONG      shift, and go to state 5
+    SHORT     shift, and go to state 6
+    SIGNED    shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    VOID      shift, and go to state 9
+
+    $default  reduce using rule 4 (D)
+
+    declaration_list           go to state 30
+    D                          go to state 31
+    declaration                go to state 12
+    variable_declaration       go to state 13
+    type_specifier             go to state 14
+    function_declaration       go to state 15
+    function_declaration_type  go to state 16
+
+
+State 13
+
+    5 declaration: variable_declaration .
+
+    $default  reduce using rule 5 (declaration)
+
+
+State 14
+
+    7 variable_declaration: type_specifier . variable_declaration_list ';'
+    8 variable_declaration_list: . variable_declaration_list ',' variable_declaration_identifier
+    9                          | . variable_declaration_identifier
+   11 variable_declaration_identifier: . identifier $@1 vdi
+   13                                | . array_identifier $@2 vdi
+   46 function_declaration_type: type_specifier . identifier '('
+
+    identifier        shift, and go to state 32
+    array_identifier  shift, and go to state 33
+
+    variable_declaration_list        go to state 34
+    variable_declaration_identifier  go to state 35
+
+
+State 15
+
+    6 declaration: function_declaration .
+
+    $default  reduce using rule 6 (declaration)
+
+
+State 16
+
+   45 function_declaration: function_declaration_type . function_declaration_param_statement
+   47 $@4: . %empty
+   49 function_declaration_param_statement: . $@4 params ')' $@5 statement
+
+    $default  reduce using rule 47 ($@4)
+
+    function_declaration_param_statement  go to state 36
+    $@4                                   go to state 37
+
+
+State 17
+
+   41 long_grammar: INT .
+
+    $default  reduce using rule 41 (long_grammar)
+
+
+State 18
+
+   28 type_specifier: LONG long_grammar .
+
+    $default  reduce using rule 28 (type_specifier)
+
+
+State 19
+
+   43 short_grammar: INT .
+
+    $default  reduce using rule 43 (short_grammar)
+
+
+State 20
+
+   29 type_specifier: SHORT short_grammar .
+
+    $default  reduce using rule 29 (type_specifier)
+
+
+State 21
+
+   37 signed_grammar: INT .
+
+    $default  reduce using rule 37 (signed_grammar)
+
+
+State 22
+
+   38 signed_grammar: LONG . long_grammar
+   41 long_grammar: . INT
+   42             | . %empty  [identifier, array_identifier]
+
+    INT  shift, and go to state 17
+
+    $default  reduce using rule 42 (long_grammar)
+
+    long_grammar  go to state 38
+
+
+State 23
+
+   39 signed_grammar: SHORT . short_grammar
+   43 short_grammar: . INT
+   44              | . %empty  [identifier, array_identifier]
+
+    INT  shift, and go to state 19
+
+    $default  reduce using rule 44 (short_grammar)
+
+    short_grammar  go to state 39
+
+
+State 24
+
+   31 type_specifier: SIGNED signed_grammar .
+
+    $default  reduce using rule 31 (type_specifier)
+
+
+State 25
+
+   33 unsigned_grammar: INT .
+
+    $default  reduce using rule 33 (unsigned_grammar)
+
+
+State 26
+
+   34 unsigned_grammar: LONG . long_grammar
+   41 long_grammar: . INT
+   42             | . %empty  [identifier, array_identifier]
+
+    INT  shift, and go to state 17
+
+    $default  reduce using rule 42 (long_grammar)
+
+    long_grammar  go to state 40
+
+
+State 27
+
+   35 unsigned_grammar: SHORT . short_grammar
+   43 short_grammar: . INT
+   44              | . %empty  [identifier, array_identifier]
+
+    INT  shift, and go to state 19
+
+    $default  reduce using rule 44 (short_grammar)
+
+    short_grammar  go to state 41
+
+
+State 28
+
+   30 type_specifier: UNSIGNED unsigned_grammar .
+
+    $default  reduce using rule 30 (type_specifier)
+
+
+State 29
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 30
+
+    3 D: declaration_list .
+
+    $default  reduce using rule 3 (D)
+
+
+State 31
+
+    2 declaration_list: declaration D .
+
+    $default  reduce using rule 2 (declaration_list)
+
+
+State 32
+
+   10 $@1: . %empty  [assignment_operator, ';', ',', '[']
+   11 variable_declaration_identifier: identifier . $@1 vdi
+   46 function_declaration_type: type_specifier identifier . '('
+
+    '('  shift, and go to state 42
+
+    $default  reduce using rule 10 ($@1)
+
+    $@1  go to state 43
+
+
+State 33
+
+   12 $@2: . %empty
+   13 variable_declaration_identifier: array_identifier . $@2 vdi
+
+    $default  reduce using rule 12 ($@2)
+
+    $@2  go to state 44
+
+
+State 34
+
+    7 variable_declaration: type_specifier variable_declaration_list . ';'
+    8 variable_declaration_list: variable_declaration_list . ',' variable_declaration_identifier
+
+    ';'  shift, and go to state 45
+    ','  shift, and go to state 46
+
+
+State 35
+
+    9 variable_declaration_list: variable_declaration_identifier .
+
+    $default  reduce using rule 9 (variable_declaration_list)
+
+
+State 36
+
+   45 function_declaration: function_declaration_type function_declaration_param_statement .
+
+    $default  reduce using rule 45 (function_declaration)
+
+
+State 37
+
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   49 function_declaration_param_statement: $@4 . params ')' $@5 statement
+   50 params: . parameters_list
+   51       | . %empty  [')']
+   53 parameters_list: . type_specifier $@6 parameters_identifier_list
+
+    INT       shift, and go to state 1
+    CHAR      shift, and go to state 2
+    FLOAT     shift, and go to state 3
+    DOUBLE    shift, and go to state 4
+    LONG      shift, and go to state 5
+    SHORT     shift, and go to state 6
+    SIGNED    shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    VOID      shift, and go to state 9
+
+    $default  reduce using rule 51 (params)
+
+    type_specifier   go to state 47
+    params           go to state 48
+    parameters_list  go to state 49
+
+
+State 38
+
+   38 signed_grammar: LONG long_grammar .
+
+    $default  reduce using rule 38 (signed_grammar)
+
+
+State 39
+
+   39 signed_grammar: SHORT short_grammar .
+
+    $default  reduce using rule 39 (signed_grammar)
+
+
+State 40
+
+   34 unsigned_grammar: LONG long_grammar .
+
+    $default  reduce using rule 34 (unsigned_grammar)
+
+
+State 41
+
+   35 unsigned_grammar: SHORT short_grammar .
+
+    $default  reduce using rule 35 (unsigned_grammar)
+
+
+State 42
+
+   46 function_declaration_type: type_specifier identifier '(' .
+
+    $default  reduce using rule 46 (function_declaration_type)
+
+
+State 43
+
+   11 variable_declaration_identifier: identifier $@1 . vdi
+   14 vdi: . identifier_array_type
+   15    | . assignment_operator simple_expression
+   16 identifier_array_type: . '[' initilization_params
+   17                      | . %empty  [';', ',']
+
+    assignment_operator  shift, and go to state 50
+    '['                  shift, and go to state 51
+
+    $default  reduce using rule 17 (identifier_array_type)
+
+    vdi                    go to state 52
+    identifier_array_type  go to state 53
+
+
+State 44
+
+   13 variable_declaration_identifier: array_identifier $@2 . vdi
+   14 vdi: . identifier_array_type
+   15    | . assignment_operator simple_expression
+   16 identifier_array_type: . '[' initilization_params
+   17                      | . %empty  [';', ',']
+
+    assignment_operator  shift, and go to state 50
+    '['                  shift, and go to state 51
+
+    $default  reduce using rule 17 (identifier_array_type)
+
+    vdi                    go to state 54
+    identifier_array_type  go to state 53
+
+
+State 45
+
+    7 variable_declaration: type_specifier variable_declaration_list ';' .
+
+    $default  reduce using rule 7 (variable_declaration)
+
+
+State 46
+
+    8 variable_declaration_list: variable_declaration_list ',' . variable_declaration_identifier
+   11 variable_declaration_identifier: . identifier $@1 vdi
+   13                                | . array_identifier $@2 vdi
+
+    identifier        shift, and go to state 55
+    array_identifier  shift, and go to state 33
+
+    variable_declaration_identifier  go to state 56
+
+
+State 47
+
+   52 $@6: . %empty
+   53 parameters_list: type_specifier . $@6 parameters_identifier_list
+
+    $default  reduce using rule 52 ($@6)
+
+    $@6  go to state 57
+
+
+State 48
+
+   49 function_declaration_param_statement: $@4 params . ')' $@5 statement
+
+    ')'  shift, and go to state 58
+
+
+State 49
+
+   50 params: parameters_list .
+
+    $default  reduce using rule 50 (params)
+
+
+State 50
+
+   15 vdi: assignment_operator . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    simple_expression          go to state 67
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 51
+
+   16 identifier_array_type: '[' . initilization_params
+   19 initilization_params: . integer_constant $@3 ']' initilization
+   20                     | . ']' string_initilization
+
+    integer_constant  shift, and go to state 78
+    ']'               shift, and go to state 79
+
+    initilization_params  go to state 80
+
+
+State 52
+
+   11 variable_declaration_identifier: identifier $@1 vdi .
+
+    $default  reduce using rule 11 (variable_declaration_identifier)
+
+
+State 53
+
+   14 vdi: identifier_array_type .
+
+    $default  reduce using rule 14 (vdi)
+
+
+State 54
+
+   13 variable_declaration_identifier: array_identifier $@2 vdi .
+
+    $default  reduce using rule 13 (variable_declaration_identifier)
+
+
+State 55
+
+   10 $@1: . %empty
+   11 variable_declaration_identifier: identifier . $@1 vdi
+
+    $default  reduce using rule 10 ($@1)
+
+    $@1  go to state 43
+
+
+State 56
+
+    8 variable_declaration_list: variable_declaration_list ',' variable_declaration_identifier .
+
+    $default  reduce using rule 8 (variable_declaration_list)
+
+
+State 57
+
+   53 parameters_list: type_specifier $@6 . parameters_identifier_list
+   54 parameters_identifier_list: . param_identifier parameters_identifier_list_breakup
+   58 param_identifier: . identifier $@7 param_identifier_breakup
+
+    identifier  shift, and go to state 81
+
+    parameters_identifier_list  go to state 82
+    param_identifier            go to state 83
+
+
+State 58
+
+   48 $@5: . %empty
+   49 function_declaration_param_statement: $@4 params ')' . $@5 statement
+
+    $default  reduce using rule 48 ($@5)
+
+    $@5  go to state 84
+
+
+State 59
+
+  140 mutable: identifier .  [modulo_assignment_operator, multiplication_assignment_operator, division_assignment_operator, addition_assignment_operator, subtraction_assignment_operator, assignment_operator, OR_operator, AND_operator, equality_operator, inequality_operator, lessthan_assignment_operator, lessthan_operator, greaterthan_assignment_operator, greaterthan_operator, add_operator, subtract_operator, multiplication_operator, division_operator, modulo_operator, increment_operator, decrement_operator, ';', ',', ']', ')']
+  149 call: identifier . '(' @28 arguments ')'
+
+    '('  shift, and go to state 85
+
+    $default  reduce using rule 140 (mutable)
+
+
+State 60
+
+  141 $@27: . %empty
+  142 mutable: array_identifier . $@27 '[' index ']'
+
+    $default  reduce using rule 141 ($@27)
+
+    $@27  go to state 86
+
+
+State 61
+
+  159 constant: integer_constant .
+
+    $default  reduce using rule 159 (constant)
+
+
+State 62
+
+  160 constant: string_constant .
+
+    $default  reduce using rule 160 (constant)
+
+
+State 63
+
+  161 constant: float_constant .
+
+    $default  reduce using rule 161 (constant)
+
+
+State 64
+
+  162 constant: character_constant .
+
+    $default  reduce using rule 162 (constant)
+
+
+State 65
+
+  118 @26: . %empty
+  119 unary_relation_expression: exclamation_operator . @26 unary_relation_expression
+
+    $default  reduce using rule 118 (@26)
+
+    @26  go to state 87
+
+
+State 66
+
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  145          | '(' . expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 88
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 67
+
+   15 vdi: assignment_operator simple_expression .  [';', ',']
+  113 simple_expression: simple_expression . OR_operator and_expression $@24
+
+    OR_operator  shift, and go to state 91
+
+    $default  reduce using rule 15 (vdi)
+
+
+State 68
+
+  114 simple_expression: and_expression .  [OR_operator, ';', ',', ')']
+  116 and_expression: and_expression . AND_operator @25 unary_relation_expression
+
+    AND_operator  shift, and go to state 92
+
+    $default  reduce using rule 114 (simple_expression)
+
+
+State 69
+
+  117 and_expression: unary_relation_expression .
+
+    $default  reduce using rule 117 (and_expression)
+
+
+State 70
+
+  120 unary_relation_expression: regular_expression .  [OR_operator, AND_operator, ';', ',', ')']
+  121 regular_expression: regular_expression . relational_operators sum_expression
+  123 relational_operators: . greaterthan_assignment_operator
+  124                     | . lessthan_assignment_operator
+  125                     | . greaterthan_operator
+  126                     | . lessthan_operator
+  127                     | . equality_operator
+  128                     | . inequality_operator
+
+    equality_operator                shift, and go to state 93
+    inequality_operator              shift, and go to state 94
+    lessthan_assignment_operator     shift, and go to state 95
+    lessthan_operator                shift, and go to state 96
+    greaterthan_assignment_operator  shift, and go to state 97
+    greaterthan_operator             shift, and go to state 98
+
+    $default  reduce using rule 120 (unary_relation_expression)
+
+    relational_operators  go to state 99
+
+
+State 71
+
+  122 regular_expression: sum_expression .  [OR_operator, AND_operator, equality_operator, inequality_operator, lessthan_assignment_operator, lessthan_operator, greaterthan_assignment_operator, greaterthan_operator, ';', ',', ')']
+  129 sum_expression: sum_expression . sum_operators term
+  131 sum_operators: . add_operator
+  132              | . subtract_operator
+
+    add_operator       shift, and go to state 100
+    subtract_operator  shift, and go to state 101
+
+    $default  reduce using rule 122 (regular_expression)
+
+    sum_operators  go to state 102
+
+
+State 72
+
+  130 sum_expression: term .  [OR_operator, AND_operator, equality_operator, inequality_operator, lessthan_assignment_operator, lessthan_operator, greaterthan_assignment_operator, greaterthan_operator, add_operator, subtract_operator, ';', ',', ']', ')']
+  133 term: term . MULOP factor
+  135 MULOP: . multiplication_operator
+  136      | . division_operator
+  137      | . modulo_operator
+
+    multiplication_operator  shift, and go to state 103
+    division_operator        shift, and go to state 104
+    modulo_operator          shift, and go to state 105
+
+    $default  reduce using rule 130 (sum_expression)
+
+    MULOP  go to state 106
+
+
+State 73
+
+  134 term: factor .
+
+    $default  reduce using rule 134 (term)
+
+
+State 74
+
+  139 factor: mutable .
+
+    $default  reduce using rule 139 (factor)
+
+
+State 75
+
+  138 factor: immutable .
+
+    $default  reduce using rule 138 (factor)
+
+
+State 76
+
+  146 immutable: call .
+
+    $default  reduce using rule 146 (immutable)
+
+
+State 77
+
+  147 immutable: constant .
+
+    $default  reduce using rule 147 (immutable)
+
+
+State 78
+
+   18 $@3: . %empty
+   19 initilization_params: integer_constant . $@3 ']' initilization
+
+    $default  reduce using rule 18 ($@3)
+
+    $@3  go to state 107
+
+
+State 79
+
+   20 initilization_params: ']' . string_initilization
+   91 string_initilization: . assignment_operator string_constant
+
+    assignment_operator  shift, and go to state 108
+
+    string_initilization  go to state 109
+
+
+State 80
+
+   16 identifier_array_type: '[' initilization_params .
+
+    $default  reduce using rule 16 (identifier_array_type)
+
+
+State 81
+
+   57 $@7: . %empty
+   58 param_identifier: identifier . $@7 param_identifier_breakup
+
+    $default  reduce using rule 57 ($@7)
+
+    $@7  go to state 110
+
+
+State 82
+
+   53 parameters_list: type_specifier $@6 parameters_identifier_list .
+
+    $default  reduce using rule 53 (parameters_list)
+
+
+State 83
+
+   54 parameters_identifier_list: param_identifier . parameters_identifier_list_breakup
+   55 parameters_identifier_list_breakup: . ',' parameters_list
+   56                                   | . %empty  [')']
+
+    ','  shift, and go to state 111
+
+    $default  reduce using rule 56 (parameters_identifier_list_breakup)
+
+    parameters_identifier_list_breakup  go to state 112
+
+
+State 84
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   49 function_declaration_param_statement: $@4 params ')' $@5 . statement
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 121
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 85
+
+  148 @28: . %empty
+  149 call: identifier '(' . @28 arguments ')'
+
+    $default  reduce using rule 148 (@28)
+
+    @28  go to state 131
+
+
+State 86
+
+  142 mutable: array_identifier $@27 . '[' index ']'
+
+    '['  shift, and go to state 132
+
+
+State 87
+
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  119                          | exclamation_operator @26 . unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    unary_relation_expression  go to state 133
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 88
+
+  145 immutable: '(' expression . ')'
+
+    ')'  shift, and go to state 134
+
+
+State 89
+
+  111 expression: simple_expression .  [';', ')']
+  113 simple_expression: simple_expression . OR_operator and_expression $@24
+
+    OR_operator  shift, and go to state 91
+
+    $default  reduce using rule 111 (expression)
+
+
+State 90
+
+   98 expression: mutable . assignment_operator $@18 expression
+  100           | mutable . addition_assignment_operator $@19 expression
+  102           | mutable . subtraction_assignment_operator $@20 expression
+  104           | mutable . multiplication_assignment_operator $@21 expression
+  106           | mutable . division_assignment_operator $@22 expression
+  108           | mutable . modulo_assignment_operator @23 expression
+  109           | mutable . increment_operator
+  110           | mutable . decrement_operator
+  139 factor: mutable .  [OR_operator, AND_operator, equality_operator, inequality_operator, lessthan_assignment_operator, lessthan_operator, greaterthan_assignment_operator, greaterthan_operator, add_operator, subtract_operator, multiplication_operator, division_operator, modulo_operator, ';', ')']
+
+    modulo_assignment_operator          shift, and go to state 135
+    multiplication_assignment_operator  shift, and go to state 136
+    division_assignment_operator        shift, and go to state 137
+    addition_assignment_operator        shift, and go to state 138
+    subtraction_assignment_operator     shift, and go to state 139
+    assignment_operator                 shift, and go to state 140
+    increment_operator                  shift, and go to state 141
+    decrement_operator                  shift, and go to state 142
+
+    $default  reduce using rule 139 (factor)
+
+
+State 91
+
+  113 simple_expression: simple_expression OR_operator . and_expression $@24
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    and_expression             go to state 143
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 92
+
+  115 @25: . %empty
+  116 and_expression: and_expression AND_operator . @25 unary_relation_expression
+
+    $default  reduce using rule 115 (@25)
+
+    @25  go to state 144
+
+
+State 93
+
+  127 relational_operators: equality_operator .
+
+    $default  reduce using rule 127 (relational_operators)
+
+
+State 94
+
+  128 relational_operators: inequality_operator .
+
+    $default  reduce using rule 128 (relational_operators)
+
+
+State 95
+
+  124 relational_operators: lessthan_assignment_operator .
+
+    $default  reduce using rule 124 (relational_operators)
+
+
+State 96
+
+  126 relational_operators: lessthan_operator .
+
+    $default  reduce using rule 126 (relational_operators)
+
+
+State 97
+
+  123 relational_operators: greaterthan_assignment_operator .
+
+    $default  reduce using rule 123 (relational_operators)
+
+
+State 98
+
+  125 relational_operators: greaterthan_operator .
+
+    $default  reduce using rule 125 (relational_operators)
+
+
+State 99
+
+  121 regular_expression: regular_expression relational_operators . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier          shift, and go to state 59
+    array_identifier    shift, and go to state 60
+    integer_constant    shift, and go to state 61
+    string_constant     shift, and go to state 62
+    float_constant      shift, and go to state 63
+    character_constant  shift, and go to state 64
+    '('                 shift, and go to state 66
+
+    sum_expression  go to state 145
+    term            go to state 72
+    factor          go to state 73
+    mutable         go to state 74
+    immutable       go to state 75
+    call            go to state 76
+    constant        go to state 77
+
+
+State 100
+
+  131 sum_operators: add_operator .
+
+    $default  reduce using rule 131 (sum_operators)
+
+
+State 101
+
+  132 sum_operators: subtract_operator .
+
+    $default  reduce using rule 132 (sum_operators)
+
+
+State 102
+
+  129 sum_expression: sum_expression sum_operators . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier          shift, and go to state 59
+    array_identifier    shift, and go to state 60
+    integer_constant    shift, and go to state 61
+    string_constant     shift, and go to state 62
+    float_constant      shift, and go to state 63
+    character_constant  shift, and go to state 64
+    '('                 shift, and go to state 66
+
+    term       go to state 146
+    factor     go to state 73
+    mutable    go to state 74
+    immutable  go to state 75
+    call       go to state 76
+    constant   go to state 77
+
+
+State 103
+
+  135 MULOP: multiplication_operator .
+
+    $default  reduce using rule 135 (MULOP)
+
+
+State 104
+
+  136 MULOP: division_operator .
+
+    $default  reduce using rule 136 (MULOP)
+
+
+State 105
+
+  137 MULOP: modulo_operator .
+
+    $default  reduce using rule 137 (MULOP)
+
+
+State 106
+
+  133 term: term MULOP . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier          shift, and go to state 59
+    array_identifier    shift, and go to state 60
+    integer_constant    shift, and go to state 61
+    string_constant     shift, and go to state 62
+    float_constant      shift, and go to state 63
+    character_constant  shift, and go to state 64
+    '('                 shift, and go to state 66
+
+    factor     go to state 147
+    mutable    go to state 74
+    immutable  go to state 75
+    call       go to state 76
+    constant   go to state 77
+
+
+State 107
+
+   19 initilization_params: integer_constant $@3 . ']' initilization
+
+    ']'  shift, and go to state 148
+
+
+State 108
+
+   91 string_initilization: assignment_operator . string_constant
+
+    string_constant  shift, and go to state 149
+
+
+State 109
+
+   20 initilization_params: ']' string_initilization .
+
+    $default  reduce using rule 20 (initilization_params)
+
+
+State 110
+
+   58 param_identifier: identifier $@7 . param_identifier_breakup
+   59 param_identifier_breakup: . '[' ']'
+   60                         | . %empty  [',', ')']
+
+    '['  shift, and go to state 150
+
+    $default  reduce using rule 60 (param_identifier_breakup)
+
+    param_identifier_breakup  go to state 151
+
+
+State 111
+
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   53 parameters_list: . type_specifier $@6 parameters_identifier_list
+   55 parameters_identifier_list_breakup: ',' . parameters_list
+
+    INT       shift, and go to state 1
+    CHAR      shift, and go to state 2
+    FLOAT     shift, and go to state 3
+    DOUBLE    shift, and go to state 4
+    LONG      shift, and go to state 5
+    SHORT     shift, and go to state 6
+    SIGNED    shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    VOID      shift, and go to state 9
+
+    type_specifier   go to state 47
+    parameters_list  go to state 152
+
+
+State 112
+
+   54 parameters_identifier_list: param_identifier parameters_identifier_list_breakup .
+
+    $default  reduce using rule 54 (parameters_identifier_list)
+
+
+State 113
+
+   76 conditional_statements: IF . '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+
+    '('  shift, and go to state 153
+
+
+State 114
+
+   88 return_statement: RETURN . ';'
+   89                 | RETURN . expression ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 154
+    '('                   shift, and go to state 66
+
+    expression                 go to state 155
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 115
+
+   81 iterative_statements: WHILE . '(' $@11 simple_expression ')' $@12 statement
+
+    '('  shift, and go to state 156
+
+
+State 116
+
+   84 iterative_statements: FOR . '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+
+    '('  shift, and go to state 157
+
+
+State 117
+
+   90 break_statement: BREAK . ';'
+
+    ';'  shift, and go to state 158
+
+
+State 118
+
+   73 expression_statment: ';' .
+
+    $default  reduce using rule 73 (expression_statment)
+
+
+State 119
+
+   67 statement: variable_declaration .
+
+    $default  reduce using rule 67 (statement)
+
+
+State 120
+
+    7 variable_declaration: type_specifier . variable_declaration_list ';'
+    8 variable_declaration_list: . variable_declaration_list ',' variable_declaration_identifier
+    9                          | . variable_declaration_identifier
+   11 variable_declaration_identifier: . identifier $@1 vdi
+   13                                | . array_identifier $@2 vdi
+
+    identifier        shift, and go to state 55
+    array_identifier  shift, and go to state 33
+
+    variable_declaration_list        go to state 34
+    variable_declaration_identifier  go to state 35
+
+
+State 121
+
+   49 function_declaration_param_statement: $@4 params ')' $@5 statement .
+
+    $default  reduce using rule 49 (function_declaration_param_statement)
+
+
+State 122
+
+   62 statement: compound_statement .
+
+    $default  reduce using rule 62 (statement)
+
+
+State 123
+
+   69 compound_statement: $@8 . '{' statment_list '}'
+
+    '{'  shift, and go to state 159
+
+
+State 124
+
+   61 statement: expression_statment .
+
+    $default  reduce using rule 61 (statement)
+
+
+State 125
+
+   63 statement: conditional_statements .
+
+    $default  reduce using rule 63 (statement)
+
+
+State 126
+
+   64 statement: iterative_statements .
+
+    $default  reduce using rule 64 (statement)
+
+
+State 127
+
+   87 iterative_statements: $@15 . DO statement WHILE '(' simple_expression ')' $@16 ';'
+
+    DO  shift, and go to state 160
+
+
+State 128
+
+   65 statement: return_statement .
+
+    $default  reduce using rule 65 (statement)
+
+
+State 129
+
+   66 statement: break_statement .
+
+    $default  reduce using rule 66 (statement)
+
+
+State 130
+
+   72 expression_statment: expression . ';'
+
+    ';'  shift, and go to state 161
+
+
+State 131
+
+  149 call: identifier '(' @28 . arguments ')'
+  150 arguments: . arguments_list
+  151          | . %empty  [')']
+  152 arguments_list: . arguments_list ',' exp
+  153               | . exp
+  154 exp: . identifier
+  155    | . integer_constant
+  156    | . string_constant
+  157    | . float_constant
+  158    | . character_constant
+
+    identifier          shift, and go to state 162
+    integer_constant    shift, and go to state 163
+    string_constant     shift, and go to state 164
+    float_constant      shift, and go to state 165
+    character_constant  shift, and go to state 166
+
+    $default  reduce using rule 151 (arguments)
+
+    arguments       go to state 167
+    arguments_list  go to state 168
+    exp             go to state 169
+
+
+State 132
+
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  142        | array_identifier $@27 '[' . index ']'
+  143 index: . sum_expression
+  144      | . integer_constant
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier          shift, and go to state 59
+    array_identifier    shift, and go to state 60
+    integer_constant    shift, and go to state 170
+    string_constant     shift, and go to state 62
+    float_constant      shift, and go to state 63
+    character_constant  shift, and go to state 64
+    '('                 shift, and go to state 66
+
+    sum_expression  go to state 171
+    term            go to state 72
+    factor          go to state 73
+    mutable         go to state 74
+    index           go to state 172
+    immutable       go to state 75
+    call            go to state 76
+    constant        go to state 77
+
+
+State 133
+
+  119 unary_relation_expression: exclamation_operator @26 unary_relation_expression .
+
+    $default  reduce using rule 119 (unary_relation_expression)
+
+
+State 134
+
+  145 immutable: '(' expression ')' .
+
+    $default  reduce using rule 145 (immutable)
+
+
+State 135
+
+  107 @23: . %empty
+  108 expression: mutable modulo_assignment_operator . @23 expression
+
+    $default  reduce using rule 107 (@23)
+
+    @23  go to state 173
+
+
+State 136
+
+  103 $@21: . %empty
+  104 expression: mutable multiplication_assignment_operator . $@21 expression
+
+    $default  reduce using rule 103 ($@21)
+
+    $@21  go to state 174
+
+
+State 137
+
+  105 $@22: . %empty
+  106 expression: mutable division_assignment_operator . $@22 expression
+
+    $default  reduce using rule 105 ($@22)
+
+    $@22  go to state 175
+
+
+State 138
+
+   99 $@19: . %empty
+  100 expression: mutable addition_assignment_operator . $@19 expression
+
+    $default  reduce using rule 99 ($@19)
+
+    $@19  go to state 176
+
+
+State 139
+
+  101 $@20: . %empty
+  102 expression: mutable subtraction_assignment_operator . $@20 expression
+
+    $default  reduce using rule 101 ($@20)
+
+    $@20  go to state 177
+
+
+State 140
+
+   97 $@18: . %empty
+   98 expression: mutable assignment_operator . $@18 expression
+
+    $default  reduce using rule 97 ($@18)
+
+    $@18  go to state 178
+
+
+State 141
+
+  109 expression: mutable increment_operator .
+
+    $default  reduce using rule 109 (expression)
+
+
+State 142
+
+  110 expression: mutable decrement_operator .
+
+    $default  reduce using rule 110 (expression)
+
+
+State 143
+
+  112 $@24: . %empty  [OR_operator, ';', ',', ')']
+  113 simple_expression: simple_expression OR_operator and_expression . $@24
+  116 and_expression: and_expression . AND_operator @25 unary_relation_expression
+
+    AND_operator  shift, and go to state 92
+
+    $default  reduce using rule 112 ($@24)
+
+    $@24  go to state 179
+
+
+State 144
+
+  116 and_expression: and_expression AND_operator @25 . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    unary_relation_expression  go to state 180
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 145
+
+  121 regular_expression: regular_expression relational_operators sum_expression .  [OR_operator, AND_operator, equality_operator, inequality_operator, lessthan_assignment_operator, lessthan_operator, greaterthan_assignment_operator, greaterthan_operator, ';', ',', ')']
+  129 sum_expression: sum_expression . sum_operators term
+  131 sum_operators: . add_operator
+  132              | . subtract_operator
+
+    add_operator       shift, and go to state 100
+    subtract_operator  shift, and go to state 101
+
+    $default  reduce using rule 121 (regular_expression)
+
+    sum_operators  go to state 102
+
+
+State 146
+
+  129 sum_expression: sum_expression sum_operators term .  [OR_operator, AND_operator, equality_operator, inequality_operator, lessthan_assignment_operator, lessthan_operator, greaterthan_assignment_operator, greaterthan_operator, add_operator, subtract_operator, ';', ',', ']', ')']
+  133 term: term . MULOP factor
+  135 MULOP: . multiplication_operator
+  136      | . division_operator
+  137      | . modulo_operator
+
+    multiplication_operator  shift, and go to state 103
+    division_operator        shift, and go to state 104
+    modulo_operator          shift, and go to state 105
+
+    $default  reduce using rule 129 (sum_expression)
+
+    MULOP  go to state 106
+
+
+State 147
+
+  133 term: term MULOP factor .
+
+    $default  reduce using rule 133 (term)
+
+
+State 148
+
+   19 initilization_params: integer_constant $@3 ']' . initilization
+   21 initilization: . string_initilization
+   22              | . array_initialization
+   23              | . %empty  [';', ',']
+   91 string_initilization: . assignment_operator string_constant
+   92 array_initialization: . assignment_operator '{' array_int_declarations '}'
+
+    assignment_operator  shift, and go to state 181
+
+    $default  reduce using rule 23 (initilization)
+
+    initilization         go to state 182
+    string_initilization  go to state 183
+    array_initialization  go to state 184
+
+
+State 149
+
+   91 string_initilization: assignment_operator string_constant .
+
+    $default  reduce using rule 91 (string_initilization)
+
+
+State 150
+
+   59 param_identifier_breakup: '[' . ']'
+
+    ']'  shift, and go to state 185
+
+
+State 151
+
+   58 param_identifier: identifier $@7 param_identifier_breakup .
+
+    $default  reduce using rule 58 (param_identifier)
+
+
+State 152
+
+   55 parameters_identifier_list_breakup: ',' parameters_list .
+
+    $default  reduce using rule 55 (parameters_identifier_list_breakup)
+
+
+State 153
+
+   76 conditional_statements: IF '(' . simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    simple_expression          go to state 186
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 154
+
+   88 return_statement: RETURN ';' .
+
+    $default  reduce using rule 88 (return_statement)
+
+
+State 155
+
+   89 return_statement: RETURN expression . ';'
+
+    ';'  shift, and go to state 187
+
+
+State 156
+
+   79 $@11: . %empty
+   81 iterative_statements: WHILE '(' . $@11 simple_expression ')' $@12 statement
+
+    $default  reduce using rule 79 ($@11)
+
+    $@11  go to state 188
+
+
+State 157
+
+   84 iterative_statements: FOR '(' . expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 189
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 158
+
+   90 break_statement: BREAK ';' .
+
+    $default  reduce using rule 90 (break_statement)
+
+
+State 159
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   69                   | $@8 '{' . statment_list '}'
+   70 statment_list: . statement statment_list
+   71              | . %empty  ['}']
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    '}'       reduce using rule 71 (statment_list)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 190
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    statment_list              go to state 191
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 160
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   87                     | $@15 DO . statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 192
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 161
+
+   72 expression_statment: expression ';' .
+
+    $default  reduce using rule 72 (expression_statment)
+
+
+State 162
+
+  154 exp: identifier .
+
+    $default  reduce using rule 154 (exp)
+
+
+State 163
+
+  155 exp: integer_constant .
+
+    $default  reduce using rule 155 (exp)
+
+
+State 164
+
+  156 exp: string_constant .
+
+    $default  reduce using rule 156 (exp)
+
+
+State 165
+
+  157 exp: float_constant .
+
+    $default  reduce using rule 157 (exp)
+
+
+State 166
+
+  158 exp: character_constant .
+
+    $default  reduce using rule 158 (exp)
+
+
+State 167
+
+  149 call: identifier '(' @28 arguments . ')'
+
+    ')'  shift, and go to state 193
+
+
+State 168
+
+  150 arguments: arguments_list .  [')']
+  152 arguments_list: arguments_list . ',' exp
+
+    ','  shift, and go to state 194
+
+    $default  reduce using rule 150 (arguments)
+
+
+State 169
+
+  153 arguments_list: exp .
+
+    $default  reduce using rule 153 (arguments_list)
+
+
+State 170
+
+  144 index: integer_constant .  [']']
+  159 constant: integer_constant .  [add_operator, subtract_operator, multiplication_operator, division_operator, modulo_operator, ']']
+
+    ']'       reduce using rule 144 (index)
+    ']'       [reduce using rule 159 (constant)]
+    $default  reduce using rule 159 (constant)
+
+
+State 171
+
+  129 sum_expression: sum_expression . sum_operators term
+  131 sum_operators: . add_operator
+  132              | . subtract_operator
+  143 index: sum_expression .  [']']
+
+    add_operator       shift, and go to state 100
+    subtract_operator  shift, and go to state 101
+
+    $default  reduce using rule 143 (index)
+
+    sum_operators  go to state 102
+
+
+State 172
+
+  142 mutable: array_identifier $@27 '[' index . ']'
+
+    ']'  shift, and go to state 195
+
+
+State 173
+
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  108           | mutable modulo_assignment_operator @23 . expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 196
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 174
+
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  104           | mutable multiplication_assignment_operator $@21 . expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 197
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 175
+
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  106           | mutable division_assignment_operator $@22 . expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 198
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 176
+
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  100           | mutable addition_assignment_operator $@19 . expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 199
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 177
+
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  102           | mutable subtraction_assignment_operator $@20 . expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 200
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 178
+
+   98 expression: . mutable assignment_operator $@18 expression
+   98           | mutable assignment_operator $@18 . expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 201
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 179
+
+  113 simple_expression: simple_expression OR_operator and_expression $@24 .
+
+    $default  reduce using rule 113 (simple_expression)
+
+
+State 180
+
+  116 and_expression: and_expression AND_operator @25 unary_relation_expression .
+
+    $default  reduce using rule 116 (and_expression)
+
+
+State 181
+
+   91 string_initilization: assignment_operator . string_constant
+   92 array_initialization: assignment_operator . '{' array_int_declarations '}'
+
+    string_constant  shift, and go to state 149
+    '{'              shift, and go to state 202
+
+
+State 182
+
+   19 initilization_params: integer_constant $@3 ']' initilization .
+
+    $default  reduce using rule 19 (initilization_params)
+
+
+State 183
+
+   21 initilization: string_initilization .
+
+    $default  reduce using rule 21 (initilization)
+
+
+State 184
+
+   22 initilization: array_initialization .
+
+    $default  reduce using rule 22 (initilization)
+
+
+State 185
+
+   59 param_identifier_breakup: '[' ']' .
+
+    $default  reduce using rule 59 (param_identifier_breakup)
+
+
+State 186
+
+   76 conditional_statements: IF '(' simple_expression . ')' $@9 statement $@10 conditional_statements_breakup
+  113 simple_expression: simple_expression . OR_operator and_expression $@24
+
+    OR_operator  shift, and go to state 91
+    ')'          shift, and go to state 203
+
+
+State 187
+
+   89 return_statement: RETURN expression ';' .
+
+    $default  reduce using rule 89 (return_statement)
+
+
+State 188
+
+   81 iterative_statements: WHILE '(' $@11 . simple_expression ')' $@12 statement
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    simple_expression          go to state 204
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 189
+
+   84 iterative_statements: FOR '(' expression . ';' $@13 simple_expression ';' $@14 expression ')' statement
+
+    ';'  shift, and go to state 205
+
+
+State 190
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   70 statment_list: . statement statment_list
+   70              | statement . statment_list
+   71              | . %empty  ['}']
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    '}'       reduce using rule 71 (statment_list)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 190
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    statment_list              go to state 206
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 191
+
+   69 compound_statement: $@8 '{' statment_list . '}'
+
+    '}'  shift, and go to state 207
+
+
+State 192
+
+   87 iterative_statements: $@15 DO statement . WHILE '(' simple_expression ')' $@16 ';'
+
+    WHILE  shift, and go to state 208
+
+
+State 193
+
+  149 call: identifier '(' @28 arguments ')' .
+
+    $default  reduce using rule 149 (call)
+
+
+State 194
+
+  152 arguments_list: arguments_list ',' . exp
+  154 exp: . identifier
+  155    | . integer_constant
+  156    | . string_constant
+  157    | . float_constant
+  158    | . character_constant
+
+    identifier          shift, and go to state 162
+    integer_constant    shift, and go to state 163
+    string_constant     shift, and go to state 164
+    float_constant      shift, and go to state 165
+    character_constant  shift, and go to state 166
+
+    exp  go to state 209
+
+
+State 195
+
+  142 mutable: array_identifier $@27 '[' index ']' .
+
+    $default  reduce using rule 142 (mutable)
+
+
+State 196
+
+  108 expression: mutable modulo_assignment_operator @23 expression .
+
+    $default  reduce using rule 108 (expression)
+
+
+State 197
+
+  104 expression: mutable multiplication_assignment_operator $@21 expression .
+
+    $default  reduce using rule 104 (expression)
+
+
+State 198
+
+  106 expression: mutable division_assignment_operator $@22 expression .
+
+    $default  reduce using rule 106 (expression)
+
+
+State 199
+
+  100 expression: mutable addition_assignment_operator $@19 expression .
+
+    $default  reduce using rule 100 (expression)
+
+
+State 200
+
+  102 expression: mutable subtraction_assignment_operator $@20 expression .
+
+    $default  reduce using rule 102 (expression)
+
+
+State 201
+
+   98 expression: mutable assignment_operator $@18 expression .
+
+    $default  reduce using rule 98 (expression)
+
+
+State 202
+
+   92 array_initialization: assignment_operator '{' . array_int_declarations '}'
+   94 array_int_declarations: . integer_constant $@17 array_int_declarations_breakup
+
+    integer_constant  shift, and go to state 210
+
+    array_int_declarations  go to state 211
+
+
+State 203
+
+   74 $@9: . %empty
+   76 conditional_statements: IF '(' simple_expression ')' . $@9 statement $@10 conditional_statements_breakup
+
+    $default  reduce using rule 74 ($@9)
+
+    $@9  go to state 212
+
+
+State 204
+
+   81 iterative_statements: WHILE '(' $@11 simple_expression . ')' $@12 statement
+  113 simple_expression: simple_expression . OR_operator and_expression $@24
+
+    OR_operator  shift, and go to state 91
+    ')'          shift, and go to state 213
+
+
+State 205
+
+   82 $@13: . %empty
+   84 iterative_statements: FOR '(' expression ';' . $@13 simple_expression ';' $@14 expression ')' statement
+
+    $default  reduce using rule 82 ($@13)
+
+    $@13  go to state 214
+
+
+State 206
+
+   70 statment_list: statement statment_list .
+
+    $default  reduce using rule 70 (statment_list)
+
+
+State 207
+
+   69 compound_statement: $@8 '{' statment_list '}' .
+
+    $default  reduce using rule 69 (compound_statement)
+
+
+State 208
+
+   87 iterative_statements: $@15 DO statement WHILE . '(' simple_expression ')' $@16 ';'
+
+    '('  shift, and go to state 215
+
+
+State 209
+
+  152 arguments_list: arguments_list ',' exp .
+
+    $default  reduce using rule 152 (arguments_list)
+
+
+State 210
+
+   93 $@17: . %empty
+   94 array_int_declarations: integer_constant . $@17 array_int_declarations_breakup
+
+    $default  reduce using rule 93 ($@17)
+
+    $@17  go to state 216
+
+
+State 211
+
+   92 array_initialization: assignment_operator '{' array_int_declarations . '}'
+
+    '}'  shift, and go to state 217
+
+
+State 212
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   76                       | IF '(' simple_expression ')' $@9 . statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 218
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 213
+
+   80 $@12: . %empty
+   81 iterative_statements: WHILE '(' $@11 simple_expression ')' . $@12 statement
+
+    $default  reduce using rule 80 ($@12)
+
+    $@12  go to state 219
+
+
+State 214
+
+   84 iterative_statements: FOR '(' expression ';' $@13 . simple_expression ';' $@14 expression ')' statement
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    simple_expression          go to state 220
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 215
+
+   87 iterative_statements: $@15 DO statement WHILE '(' . simple_expression ')' $@16 ';'
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    simple_expression          go to state 221
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 74
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 216
+
+   94 array_int_declarations: integer_constant $@17 . array_int_declarations_breakup
+   95 array_int_declarations_breakup: . ',' array_int_declarations
+   96                               | . %empty  ['}']
+
+    ','  shift, and go to state 222
+
+    $default  reduce using rule 96 (array_int_declarations_breakup)
+
+    array_int_declarations_breakup  go to state 223
+
+
+State 217
+
+   92 array_initialization: assignment_operator '{' array_int_declarations '}' .
+
+    $default  reduce using rule 92 (array_initialization)
+
+
+State 218
+
+   75 $@10: . %empty
+   76 conditional_statements: IF '(' simple_expression ')' $@9 statement . $@10 conditional_statements_breakup
+
+    $default  reduce using rule 75 ($@10)
+
+    $@10  go to state 224
+
+
+State 219
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   81                     | WHILE '(' $@11 simple_expression ')' $@12 . statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 225
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 220
+
+   84 iterative_statements: FOR '(' expression ';' $@13 simple_expression . ';' $@14 expression ')' statement
+  113 simple_expression: simple_expression . OR_operator and_expression $@24
+
+    OR_operator  shift, and go to state 91
+    ';'          shift, and go to state 226
+
+
+State 221
+
+   87 iterative_statements: $@15 DO statement WHILE '(' simple_expression . ')' $@16 ';'
+  113 simple_expression: simple_expression . OR_operator and_expression $@24
+
+    OR_operator  shift, and go to state 91
+    ')'          shift, and go to state 227
+
+
+State 222
+
+   94 array_int_declarations: . integer_constant $@17 array_int_declarations_breakup
+   95 array_int_declarations_breakup: ',' . array_int_declarations
+
+    integer_constant  shift, and go to state 210
+
+    array_int_declarations  go to state 228
+
+
+State 223
+
+   94 array_int_declarations: integer_constant $@17 array_int_declarations_breakup .
+
+    $default  reduce using rule 94 (array_int_declarations)
+
+
+State 224
+
+   76 conditional_statements: IF '(' simple_expression ')' $@9 statement $@10 . conditional_statements_breakup
+   77 conditional_statements_breakup: . ELSE statement
+   78                               | . %empty  [$end, IF, INT, CHAR, FLOAT, DOUBLE, LONG, SHORT, SIGNED, UNSIGNED, RETURN, VOID, WHILE, FOR, DO, BREAK, identifier, array_identifier, integer_constant, string_constant, float_constant, character_constant, ELSE, exclamation_operator, ';', '(', '{', '}']
+
+    ELSE  shift, and go to state 229
+
+    ELSE      [reduce using rule 78 (conditional_statements_breakup)]
+    $default  reduce using rule 78 (conditional_statements_breakup)
+
+    conditional_statements_breakup  go to state 230
+
+
+State 225
+
+   81 iterative_statements: WHILE '(' $@11 simple_expression ')' $@12 statement .
+
+    $default  reduce using rule 81 (iterative_statements)
+
+
+State 226
+
+   83 $@14: . %empty
+   84 iterative_statements: FOR '(' expression ';' $@13 simple_expression ';' . $@14 expression ')' statement
+
+    $default  reduce using rule 83 ($@14)
+
+    $@14  go to state 231
+
+
+State 227
+
+   86 $@16: . %empty
+   87 iterative_statements: $@15 DO statement WHILE '(' simple_expression ')' . $@16 ';'
+
+    $default  reduce using rule 86 ($@16)
+
+    $@16  go to state 232
+
+
+State 228
+
+   95 array_int_declarations_breakup: ',' array_int_declarations .
+
+    $default  reduce using rule 95 (array_int_declarations_breakup)
+
+
+State 229
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   77 conditional_statements_breakup: ELSE . statement
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 233
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 230
+
+   76 conditional_statements: IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup .
+
+    $default  reduce using rule 76 (conditional_statements)
+
+
+State 231
+
+   84 iterative_statements: FOR '(' expression ';' $@13 simple_expression ';' $@14 . expression ')' statement
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    '('                   shift, and go to state 66
+
+    expression                 go to state 234
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 232
+
+   87 iterative_statements: $@15 DO statement WHILE '(' simple_expression ')' $@16 . ';'
+
+    ';'  shift, and go to state 235
+
+
+State 233
+
+   77 conditional_statements_breakup: ELSE statement .
+
+    $default  reduce using rule 77 (conditional_statements_breakup)
+
+
+State 234
+
+   84 iterative_statements: FOR '(' expression ';' $@13 simple_expression ';' $@14 expression . ')' statement
+
+    ')'  shift, and go to state 236
+
+
+State 235
+
+   87 iterative_statements: $@15 DO statement WHILE '(' simple_expression ')' $@16 ';' .
+
+    $default  reduce using rule 87 (iterative_statements)
+
+
+State 236
+
+    7 variable_declaration: . type_specifier variable_declaration_list ';'
+   24 type_specifier: . INT
+   25               | . CHAR
+   26               | . FLOAT
+   27               | . DOUBLE
+   28               | . LONG long_grammar
+   29               | . SHORT short_grammar
+   30               | . UNSIGNED unsigned_grammar
+   31               | . SIGNED signed_grammar
+   32               | . VOID
+   61 statement: . expression_statment
+   62          | . compound_statement
+   63          | . conditional_statements
+   64          | . iterative_statements
+   65          | . return_statement
+   66          | . break_statement
+   67          | . variable_declaration
+   68 $@8: . %empty  ['{']
+   69 compound_statement: . $@8 '{' statment_list '}'
+   72 expression_statment: . expression ';'
+   73                    | . ';'
+   76 conditional_statements: . IF '(' simple_expression ')' $@9 statement $@10 conditional_statements_breakup
+   81 iterative_statements: . WHILE '(' $@11 simple_expression ')' $@12 statement
+   84                     | . FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement
+   84                     | FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' . statement
+   85 $@15: . %empty  [DO]
+   87 iterative_statements: . $@15 DO statement WHILE '(' simple_expression ')' $@16 ';'
+   88 return_statement: . RETURN ';'
+   89                 | . RETURN expression ';'
+   90 break_statement: . BREAK ';'
+   98 expression: . mutable assignment_operator $@18 expression
+  100           | . mutable addition_assignment_operator $@19 expression
+  102           | . mutable subtraction_assignment_operator $@20 expression
+  104           | . mutable multiplication_assignment_operator $@21 expression
+  106           | . mutable division_assignment_operator $@22 expression
+  108           | . mutable modulo_assignment_operator @23 expression
+  109           | . mutable increment_operator
+  110           | . mutable decrement_operator
+  111           | . simple_expression
+  113 simple_expression: . simple_expression OR_operator and_expression $@24
+  114                  | . and_expression
+  116 and_expression: . and_expression AND_operator @25 unary_relation_expression
+  117               | . unary_relation_expression
+  119 unary_relation_expression: . exclamation_operator @26 unary_relation_expression
+  120                          | . regular_expression
+  121 regular_expression: . regular_expression relational_operators sum_expression
+  122                   | . sum_expression
+  129 sum_expression: . sum_expression sum_operators term
+  130               | . term
+  133 term: . term MULOP factor
+  134     | . factor
+  138 factor: . immutable
+  139       | . mutable
+  140 mutable: . identifier
+  142        | . array_identifier $@27 '[' index ']'
+  145 immutable: . '(' expression ')'
+  146          | . call
+  147          | . constant
+  149 call: . identifier '(' @28 arguments ')'
+  159 constant: . integer_constant
+  160         | . string_constant
+  161         | . float_constant
+  162         | . character_constant
+
+    IF                    shift, and go to state 113
+    INT                   shift, and go to state 1
+    CHAR                  shift, and go to state 2
+    FLOAT                 shift, and go to state 3
+    DOUBLE                shift, and go to state 4
+    LONG                  shift, and go to state 5
+    SHORT                 shift, and go to state 6
+    SIGNED                shift, and go to state 7
+    UNSIGNED              shift, and go to state 8
+    RETURN                shift, and go to state 114
+    VOID                  shift, and go to state 9
+    WHILE                 shift, and go to state 115
+    FOR                   shift, and go to state 116
+    BREAK                 shift, and go to state 117
+    identifier            shift, and go to state 59
+    array_identifier      shift, and go to state 60
+    integer_constant      shift, and go to state 61
+    string_constant       shift, and go to state 62
+    float_constant        shift, and go to state 63
+    character_constant    shift, and go to state 64
+    exclamation_operator  shift, and go to state 65
+    ';'                   shift, and go to state 118
+    '('                   shift, and go to state 66
+
+    DO        reduce using rule 85 ($@15)
+    $default  reduce using rule 68 ($@8)
+
+    variable_declaration       go to state 119
+    type_specifier             go to state 120
+    statement                  go to state 237
+    compound_statement         go to state 122
+    $@8                        go to state 123
+    expression_statment        go to state 124
+    conditional_statements     go to state 125
+    iterative_statements       go to state 126
+    $@15                       go to state 127
+    return_statement           go to state 128
+    break_statement            go to state 129
+    expression                 go to state 130
+    simple_expression          go to state 89
+    and_expression             go to state 68
+    unary_relation_expression  go to state 69
+    regular_expression         go to state 70
+    sum_expression             go to state 71
+    term                       go to state 72
+    factor                     go to state 73
+    mutable                    go to state 90
+    immutable                  go to state 75
+    call                       go to state 76
+    constant                   go to state 77
+
+
+State 237
+
+   84 iterative_statements: FOR '(' expression ';' $@13 simple_expression ';' $@14 expression ')' statement .
+
+    $default  reduce using rule 84 (iterative_statements)
