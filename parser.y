@@ -62,6 +62,7 @@
 	char temp[100] = "t";
 	char tempo[100] = "\0";
 	char tempo2[100] = "\0";
+	char tempo3[100] = "\0";
 	char typ;
 	int tip=3;
 %}
@@ -331,17 +332,18 @@ array_int_declarations_breakup
 			| ;
 
 expression 
-			: mutable assignment_operator { push("=");} expression   {   
+			: mutable 
+			assignment_operator { push("="); if(tempo[0] != '\0') {strcpy(tempo3, tempo);} } expression   {   
 																	  if($1==1 && $4==1) 
 																	  {
 			                                                          $$=1;
 			                                                          } 
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
-																																if(tempo[0] != '\0')
+																																if(tempo3[0] != '\0')
 																																{
-																																	printf("*%s = %s\n", tempo, temp);
-																																	cln(tempo, 100);
+																																	printf("*%s = %s\n", tempo3, temp);
+																																	cln(tempo3, 100);
 																																}
 																																else
 			                                                          codeassign();
@@ -453,6 +455,13 @@ mutable
 			              }
 			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid);} '[' index ']' 
 			                   {	
+													 char temp1[100] = "\0";
+													 strcpy(temp1, "*" );
+													 strcat(temp1, tempo);
+
+															top--;
+														//	printf("\n\n%s\n\n", tempo);
+													 push(temp1);
 													 if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
 			              		$$ = 1;
 			              		else
@@ -463,7 +472,7 @@ mutable
 
 index:	sum_expression
 
-			{	 //printf("sum_expression\n\n\n");
+			{	 printf("sum_expression\n\n\n");
 				char temp1[100], temp2[100], temp3[100];
 												strcpy(temp1, "t");
 												char buffer[100];
@@ -792,14 +801,15 @@ struct stack
 
 void push(char *x)
 {
+	
 	strcpy(s[++top].value,x);
 	
-//	printf("push:	");
+	/*printf("push:	");
 	for(int i=0 ; i<top ; i++)
 	{
-//		printf("%s	", s[i].value);
+		printf("%s	", s[i].value);
 	}
-//	printf("\n\n");
+	printf("\n\n");*/
 }
 
 void swap(char *x, char *y)
@@ -873,12 +883,7 @@ void codegen()
 	itoa(count,buffer,10);
 	strcat(temp,buffer);
 	printf("%s = %s %s ",temp,s[top-2].value,s[top-1].value);
-	if(tempo[0] != '\0')
-	{
-		printf("*%s\n", tempo);
-		cln(tempo, 100);
-	}
-	else
+	
 	{
 		printf("%s\n", s[top].value);
 	}

@@ -131,10 +131,11 @@
 	char temp[100] = "t";
 	char tempo[100] = "\0";
 	char tempo2[100] = "\0";
+	char tempo3[100] = "\0";
 	char typ;
 	int tip=3;
 
-#line 138 "y.tab.c"
+#line 139 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -693,24 +694,24 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   110,   110,   113,   116,   117,   120,   121,   124,   127,
-     127,   130,   130,   131,   131,   147,   147,   150,   151,   154,
-     154,   155,   158,   159,   160,   163,   163,   163,   163,   164,
-     165,   166,   167,   168,   171,   171,   171,   171,   174,   174,
-     174,   174,   177,   177,   180,   180,   183,   186,   189,   189,
-     189,   192,   192,   195,   195,   198,   201,   202,   205,   205,
-     208,   209,   212,   212,   213,   213,   214,   214,   215,   215,
-     217,   218,   221,   223,   227,   227,   233,   237,   239,   280,
-     280,   283,   284,   287,   288,   291,   291,   291,   294,   295,
-     298,   298,   298,   299,   299,   299,   300,   300,   300,   302,
-     303,   316,   319,   322,   327,   327,   330,   331,   334,   334,
-     349,   349,   356,   356,   363,   363,   370,   370,   376,   376,
-     383,   384,   385,   389,   389,   390,   393,   393,   394,   398,
-     398,   399,   402,   403,   406,   406,   406,   406,   406,   406,
-     409,   410,   413,   414,   417,   418,   421,   421,   421,   424,
-     425,   429,   454,   454,   464,   586,   729,   730,   731,   734,
-     734,   761,   761,   764,   765,   767,   767,   767,   767,   767,
-     770,   771,   772,   773
+       0,   111,   111,   114,   117,   118,   121,   122,   125,   128,
+     128,   131,   131,   132,   132,   148,   148,   151,   152,   155,
+     155,   156,   159,   160,   161,   164,   164,   164,   164,   165,
+     166,   167,   168,   169,   172,   172,   172,   172,   175,   175,
+     175,   175,   178,   178,   181,   181,   184,   187,   190,   190,
+     190,   193,   193,   196,   196,   199,   202,   203,   206,   206,
+     209,   210,   213,   213,   214,   214,   215,   215,   216,   216,
+     218,   219,   222,   224,   228,   228,   234,   238,   240,   281,
+     281,   284,   285,   288,   289,   292,   292,   292,   295,   296,
+     299,   299,   299,   300,   300,   300,   301,   301,   301,   303,
+     304,   317,   320,   323,   328,   328,   331,   332,   336,   335,
+     351,   351,   358,   358,   365,   365,   372,   372,   378,   378,
+     385,   386,   387,   391,   391,   392,   395,   395,   396,   400,
+     400,   401,   404,   405,   408,   408,   408,   408,   408,   408,
+     411,   412,   415,   416,   419,   420,   423,   423,   423,   426,
+     427,   431,   456,   456,   473,   595,   738,   739,   740,   743,
+     743,   770,   770,   773,   774,   776,   776,   776,   776,   776,
+     779,   780,   781,   782
 };
 #endif
 
@@ -1726,19 +1727,19 @@ yyreduce:
   switch (yyn)
     {
   case 11:
-#line 130 "parser.y"
+#line 131 "parser.y"
                                      {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  }
-#line 1732 "y.tab.c"
+#line 1733 "y.tab.c"
     break;
 
   case 13:
-#line 131 "parser.y"
+#line 132 "parser.y"
                                              {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  }
-#line 1738 "y.tab.c"
+#line 1739 "y.tab.c"
     break;
 
   case 14:
-#line 131 "parser.y"
+#line 132 "parser.y"
                                                                                                                                               {	// printf("%s  %d\n\n\n", curid, arr_size);
 
 						  insertSTarrSize(curid, arr_size);
@@ -1752,93 +1753,93 @@ yyreduce:
 							printf("%s = %d \n", temp, arr_size);
 							printf("%s %s \n", curid, temp);
 				}
-#line 1756 "y.tab.c"
+#line 1757 "y.tab.c"
     break;
 
   case 19:
-#line 154 "parser.y"
+#line 155 "parser.y"
                                            {arr_size = yylval; }
-#line 1762 "y.tab.c"
+#line 1763 "y.tab.c"
     break;
 
   case 20:
-#line 154 "parser.y"
+#line 155 "parser.y"
                                                                                    {if(yyval < 1) {printf("Wrong array size\n"); exit(0);} }
-#line 1768 "y.tab.c"
+#line 1769 "y.tab.c"
     break;
 
   case 47:
-#line 186 "parser.y"
+#line 187 "parser.y"
                                                          { strcpy(currfunctype, curtype); strcpy(currfunc, curid); check_duplicate(curid); insertSTF(curid); ins(); }
-#line 1774 "y.tab.c"
+#line 1775 "y.tab.c"
     break;
 
   case 48:
-#line 189 "parser.y"
+#line 190 "parser.y"
                           {params_count=0;}
-#line 1780 "y.tab.c"
+#line 1781 "y.tab.c"
     break;
 
   case 49:
-#line 189 "parser.y"
+#line 190 "parser.y"
                                                       {funcgen();}
-#line 1786 "y.tab.c"
+#line 1787 "y.tab.c"
     break;
 
   case 50:
-#line 189 "parser.y"
+#line 190 "parser.y"
                                                                              {funcgenend();}
-#line 1792 "y.tab.c"
+#line 1793 "y.tab.c"
     break;
 
   case 51:
-#line 192 "parser.y"
+#line 193 "parser.y"
                                           { insertSTparamscount(currfunc, params_count); }
-#line 1798 "y.tab.c"
+#line 1799 "y.tab.c"
     break;
 
   case 52:
-#line 192 "parser.y"
+#line 193 "parser.y"
                                                                                             { insertSTparamscount(currfunc, params_count); }
-#line 1804 "y.tab.c"
+#line 1805 "y.tab.c"
     break;
 
   case 53:
-#line 195 "parser.y"
+#line 196 "parser.y"
                                          { check_params(curtype);}
-#line 1810 "y.tab.c"
+#line 1811 "y.tab.c"
     break;
 
   case 58:
-#line 205 "parser.y"
+#line 206 "parser.y"
                                      { ins();insertSTnest(curid,1); params_count++; }
-#line 1816 "y.tab.c"
+#line 1817 "y.tab.c"
     break;
 
   case 72:
-#line 221 "parser.y"
+#line 222 "parser.y"
                                            {printf("print new line\n");}
-#line 1822 "y.tab.c"
+#line 1823 "y.tab.c"
     break;
 
   case 74:
-#line 227 "parser.y"
+#line 228 "parser.y"
                                         {
 					printf("print %s\n", temp);
 		}
-#line 1830 "y.tab.c"
+#line 1831 "y.tab.c"
     break;
 
   case 76:
-#line 233 "parser.y"
+#line 234 "parser.y"
                                                 { 
 				printf("print %s\n", temp);
 		}
-#line 1838 "y.tab.c"
+#line 1839 "y.tab.c"
     break;
 
   case 78:
-#line 239 "parser.y"
+#line 240 "parser.y"
                                       {
 
 								//	printf("%c\n\n", typ);
@@ -1878,101 +1879,101 @@ yyreduce:
 									cln(tempo2, 100);
 
 							}
-#line 1882 "y.tab.c"
+#line 1883 "y.tab.c"
     break;
 
   case 79:
-#line 280 "parser.y"
+#line 281 "parser.y"
                           {currnest++;}
-#line 1888 "y.tab.c"
+#line 1889 "y.tab.c"
     break;
 
   case 80:
-#line 280 "parser.y"
+#line 281 "parser.y"
                                                                 {deletedata(currnest);currnest--;}
-#line 1894 "y.tab.c"
+#line 1895 "y.tab.c"
     break;
 
   case 85:
-#line 291 "parser.y"
+#line 292 "parser.y"
                                                        {label1();if(yyvsp[-1]!=1){printf("Condition checking is not of type int\n");exit(0);}}
-#line 1900 "y.tab.c"
+#line 1901 "y.tab.c"
     break;
 
   case 86:
-#line 291 "parser.y"
+#line 292 "parser.y"
                                                                                                                                                   {label2();}
-#line 1906 "y.tab.c"
+#line 1907 "y.tab.c"
     break;
 
   case 88:
-#line 294 "parser.y"
+#line 295 "parser.y"
                                          {label3();}
-#line 1912 "y.tab.c"
+#line 1913 "y.tab.c"
     break;
 
   case 89:
-#line 295 "parser.y"
+#line 296 "parser.y"
                           {label3();}
-#line 1918 "y.tab.c"
+#line 1919 "y.tab.c"
     break;
 
   case 90:
-#line 298 "parser.y"
+#line 299 "parser.y"
                                     {label4();}
-#line 1924 "y.tab.c"
+#line 1925 "y.tab.c"
     break;
 
   case 91:
-#line 298 "parser.y"
+#line 299 "parser.y"
                                                                       {label1();if(yyvsp[-1]!=1){printf("Condition checking is not of type int\n");exit(0);}}
-#line 1930 "y.tab.c"
+#line 1931 "y.tab.c"
     break;
 
   case 92:
-#line 298 "parser.y"
+#line 299 "parser.y"
                                                                                                                                                                  {label5();}
-#line 1936 "y.tab.c"
+#line 1937 "y.tab.c"
     break;
 
   case 93:
-#line 299 "parser.y"
+#line 300 "parser.y"
                                                  {label4();}
-#line 1942 "y.tab.c"
+#line 1943 "y.tab.c"
     break;
 
   case 94:
-#line 299 "parser.y"
+#line 300 "parser.y"
                                                                                    {label1();if(yyvsp[-1]!=1){printf("Condition checking is not of type int\n");exit(0);}}
-#line 1948 "y.tab.c"
+#line 1949 "y.tab.c"
     break;
 
   case 95:
-#line 299 "parser.y"
+#line 300 "parser.y"
                                                                                                                                                                                             {label5();}
-#line 1954 "y.tab.c"
+#line 1955 "y.tab.c"
     break;
 
   case 96:
-#line 300 "parser.y"
+#line 301 "parser.y"
                           {label4();}
-#line 1960 "y.tab.c"
+#line 1961 "y.tab.c"
     break;
 
   case 97:
-#line 300 "parser.y"
+#line 301 "parser.y"
                                                                                  {label1();label5();if(yyvsp[-1]!=1){printf("Condition checking is not of type int\n");exit(0);}}
-#line 1966 "y.tab.c"
+#line 1967 "y.tab.c"
     break;
 
   case 99:
-#line 302 "parser.y"
+#line 303 "parser.y"
                                      {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
-#line 1972 "y.tab.c"
+#line 1973 "y.tab.c"
     break;
 
   case 100:
-#line 303 "parser.y"
+#line 304 "parser.y"
                                                 { 	if(!strcmp(currfunctype, "void"))
 										{ 
 											yyerror("Function is void");
@@ -1984,63 +1985,63 @@ yyreduce:
 										}
 
 									}
-#line 1988 "y.tab.c"
+#line 1989 "y.tab.c"
     break;
 
   case 102:
-#line 319 "parser.y"
+#line 320 "parser.y"
                                                               {insV();}
-#line 1994 "y.tab.c"
+#line 1995 "y.tab.c"
     break;
 
   case 103:
-#line 322 "parser.y"
+#line 323 "parser.y"
                                                                              {if(arr_count > arr_size) {printf("initilization of array with too many variables on line no %d\n"); exit(0);}
 			arr_count = arr_size = 0;
 			}
-#line 2002 "y.tab.c"
+#line 2003 "y.tab.c"
     break;
 
   case 104:
-#line 327 "parser.y"
+#line 328 "parser.y"
                                            {arr_count++;}
-#line 2008 "y.tab.c"
+#line 2009 "y.tab.c"
     break;
 
   case 108:
-#line 334 "parser.y"
-                                                      { push("=");}
-#line 2014 "y.tab.c"
+#line 336 "parser.y"
+                                            { push("="); if(tempo[0] != '\0') {strcpy(tempo3, tempo);} }
+#line 2015 "y.tab.c"
     break;
 
   case 109:
-#line 334 "parser.y"
-                                                                                 {   
+#line 336 "parser.y"
+                                                                                                                      {   
 																	  if(yyvsp[-3]==1 && yyvsp[0]==1) 
 																	  {
 			                                                          yyval=1;
 			                                                          } 
 			                                                          else 
 			                                                          {yyval=-1; printf("Type mismatch\n"); exit(0);} 
-																																if(tempo[0] != '\0')
+																																if(tempo3[0] != '\0')
 																																{
-																																	printf("*%s = %s\n", tempo, temp);
-																																	cln(tempo, 100);
+																																	printf("*%s = %s\n", tempo3, temp);
+																																	cln(tempo3, 100);
 																																}
 																																else
 			                                                          codeassign();
 			                                                       }
-#line 2034 "y.tab.c"
+#line 2035 "y.tab.c"
     break;
 
   case 110:
-#line 349 "parser.y"
+#line 351 "parser.y"
                                                                {push("+=");}
-#line 2040 "y.tab.c"
+#line 2041 "y.tab.c"
     break;
 
   case 111:
-#line 349 "parser.y"
+#line 351 "parser.y"
                                                                                        {  
 																	  if(yyvsp[-3]==1 && yyvsp[0]==1) 
 			                                                          yyval=1; 
@@ -2048,17 +2049,17 @@ yyreduce:
 			                                                          {yyval=-1; printf("Type mismatch\n"); exit(0);} 
 			                                                          codeassign();
 			                                                       }
-#line 2052 "y.tab.c"
+#line 2053 "y.tab.c"
     break;
 
   case 112:
-#line 356 "parser.y"
+#line 358 "parser.y"
                                                                   {push("-=");}
-#line 2058 "y.tab.c"
+#line 2059 "y.tab.c"
     break;
 
   case 113:
-#line 356 "parser.y"
+#line 358 "parser.y"
                                                                                             {	  
 																	  if(yyvsp[-3]==1 && yyvsp[0]==1) 
 			                                                          yyval=1; 
@@ -2066,17 +2067,17 @@ yyreduce:
 			                                                          {yyval=-1; printf("Type mismatch\n"); exit(0);} 
 			                                                          codeassign();
 			                                                       }
-#line 2070 "y.tab.c"
+#line 2071 "y.tab.c"
     break;
 
   case 114:
-#line 363 "parser.y"
+#line 365 "parser.y"
                                                                      {push("*=");}
-#line 2076 "y.tab.c"
+#line 2077 "y.tab.c"
     break;
 
   case 115:
-#line 363 "parser.y"
+#line 365 "parser.y"
                                                                                               {
 																	  if(yyvsp[-3]==1 && yyvsp[0]==1) 
 			                                                          yyval=1; 
@@ -2084,34 +2085,34 @@ yyreduce:
 			                                                          {yyval=-1; printf("Type mismatch\n"); exit(0);}
 			                                                          codeassign(); 
 			                                                       }
-#line 2088 "y.tab.c"
+#line 2089 "y.tab.c"
     break;
 
   case 116:
-#line 370 "parser.y"
+#line 372 "parser.y"
                                                                {push("/=");}
-#line 2094 "y.tab.c"
+#line 2095 "y.tab.c"
     break;
 
   case 117:
-#line 370 "parser.y"
+#line 372 "parser.y"
                                                                                                 { 
 																	  if(yyvsp[-3]==1 && yyvsp[0]==1) 
 			                                                          yyval=1; 
 			                                                          else 
 			                                                          {yyval=-1; printf("Type mismatch\n"); exit(0);} 
 			                                                       }
-#line 2105 "y.tab.c"
+#line 2106 "y.tab.c"
     break;
 
   case 118:
-#line 376 "parser.y"
+#line 378 "parser.y"
                                                              {push("%=");}
-#line 2111 "y.tab.c"
+#line 2112 "y.tab.c"
     break;
 
   case 119:
-#line 376 "parser.y"
+#line 378 "parser.y"
                                                                                                 { 
 																	  if(yyvsp[-3]==1 && yyvsp[-1]==1) 
 			                                                          yyval=1; 
@@ -2119,197 +2120,197 @@ yyreduce:
 			                                                          {yyval=-1; printf("Type mismatch\n"); exit(0);} 
 			                                                          codeassign();
 																	}
-#line 2123 "y.tab.c"
+#line 2124 "y.tab.c"
     break;
 
   case 120:
-#line 383 "parser.y"
+#line 385 "parser.y"
                                                                                                         { push("++");if(yyvsp[-1] == 1) yyval=1; else yyval=-1; genunary();}
-#line 2129 "y.tab.c"
+#line 2130 "y.tab.c"
     break;
 
   case 121:
-#line 384 "parser.y"
+#line 386 "parser.y"
                                                                                                         {push("--");if(yyvsp[-1] == 1) yyval=1; else yyval=-1; genunary();}
-#line 2135 "y.tab.c"
+#line 2136 "y.tab.c"
     break;
 
   case 122:
-#line 385 "parser.y"
+#line 387 "parser.y"
                                             {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2141 "y.tab.c"
+#line 2142 "y.tab.c"
     break;
 
   case 123:
-#line 389 "parser.y"
+#line 391 "parser.y"
                                                                        {push("||");}
-#line 2147 "y.tab.c"
+#line 2148 "y.tab.c"
     break;
 
   case 124:
-#line 389 "parser.y"
+#line 391 "parser.y"
                                                                                      {if(yyvsp[-3] == 1 && yyvsp[-1]==1) yyval=1; else yyval=-1; codegen();}
-#line 2153 "y.tab.c"
+#line 2154 "y.tab.c"
     break;
 
   case 125:
-#line 390 "parser.y"
+#line 392 "parser.y"
                                          {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2159 "y.tab.c"
+#line 2160 "y.tab.c"
     break;
 
   case 126:
-#line 393 "parser.y"
+#line 395 "parser.y"
                                                       {push("&&");}
-#line 2165 "y.tab.c"
+#line 2166 "y.tab.c"
     break;
 
   case 127:
-#line 393 "parser.y"
+#line 395 "parser.y"
                                                                                                {if(yyvsp[-3] == 1 && yyvsp[-1]==1) yyval=1; else yyval=-1; codegen();}
-#line 2171 "y.tab.c"
+#line 2172 "y.tab.c"
     break;
 
   case 128:
-#line 394 "parser.y"
+#line 396 "parser.y"
                                                      {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2177 "y.tab.c"
+#line 2178 "y.tab.c"
     break;
 
   case 129:
-#line 398 "parser.y"
+#line 400 "parser.y"
                                                {push("!");}
-#line 2183 "y.tab.c"
+#line 2184 "y.tab.c"
     break;
 
   case 130:
-#line 398 "parser.y"
+#line 400 "parser.y"
                                                                                       {if(yyvsp[-1]==1) yyval=1; else yyval=-1; codegen();}
-#line 2189 "y.tab.c"
+#line 2190 "y.tab.c"
     break;
 
   case 131:
-#line 399 "parser.y"
+#line 401 "parser.y"
                                              {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2195 "y.tab.c"
+#line 2196 "y.tab.c"
     break;
 
   case 132:
-#line 402 "parser.y"
+#line 404 "parser.y"
                                                                                  {if(yyvsp[-2] == 1 && yyvsp[0]==1) yyval=1; else yyval=-1; codegen();}
-#line 2201 "y.tab.c"
+#line 2202 "y.tab.c"
     break;
 
   case 133:
-#line 403 "parser.y"
+#line 405 "parser.y"
                                            {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2207 "y.tab.c"
+#line 2208 "y.tab.c"
     break;
 
   case 134:
-#line 406 "parser.y"
+#line 408 "parser.y"
                                                           {push(">=");}
-#line 2213 "y.tab.c"
+#line 2214 "y.tab.c"
     break;
 
   case 135:
-#line 406 "parser.y"
+#line 408 "parser.y"
                                                                                                        {push("<=");}
-#line 2219 "y.tab.c"
+#line 2220 "y.tab.c"
     break;
 
   case 136:
-#line 406 "parser.y"
+#line 408 "parser.y"
                                                                                                                                             {push(">");}
-#line 2225 "y.tab.c"
+#line 2226 "y.tab.c"
     break;
 
   case 137:
-#line 406 "parser.y"
+#line 408 "parser.y"
                                                                                                                                                                             {push("<");}
-#line 2231 "y.tab.c"
+#line 2232 "y.tab.c"
     break;
 
   case 138:
-#line 406 "parser.y"
+#line 408 "parser.y"
                                                                                                                                                                                                             {push("==");}
-#line 2237 "y.tab.c"
+#line 2238 "y.tab.c"
     break;
 
   case 139:
-#line 406 "parser.y"
+#line 408 "parser.y"
                                                                                                                                                                                                                                                {push("!=");}
-#line 2243 "y.tab.c"
+#line 2244 "y.tab.c"
     break;
 
   case 140:
-#line 409 "parser.y"
+#line 411 "parser.y"
                                                              {if(yyvsp[-2] == 1 && yyvsp[0]==1) yyval=1; else yyval=-1; codegen(); }
-#line 2249 "y.tab.c"
+#line 2250 "y.tab.c"
     break;
 
   case 141:
-#line 410 "parser.y"
+#line 412 "parser.y"
                                {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2255 "y.tab.c"
+#line 2256 "y.tab.c"
     break;
 
   case 142:
-#line 413 "parser.y"
+#line 415 "parser.y"
                                        { push("+");}
-#line 2261 "y.tab.c"
+#line 2262 "y.tab.c"
     break;
 
   case 143:
-#line 414 "parser.y"
+#line 416 "parser.y"
                                             {push("-");}
-#line 2267 "y.tab.c"
+#line 2268 "y.tab.c"
     break;
 
   case 144:
-#line 417 "parser.y"
+#line 419 "parser.y"
                                             {if(yyvsp[-2] == 1 && yyvsp[0]==1) yyval=1; else yyval=-1; codegen();}
-#line 2273 "y.tab.c"
+#line 2274 "y.tab.c"
     break;
 
   case 145:
-#line 418 "parser.y"
+#line 420 "parser.y"
                                  {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2279 "y.tab.c"
+#line 2280 "y.tab.c"
     break;
 
   case 146:
-#line 421 "parser.y"
+#line 423 "parser.y"
                                                   {push("*");}
-#line 2285 "y.tab.c"
+#line 2286 "y.tab.c"
     break;
 
   case 147:
-#line 421 "parser.y"
+#line 423 "parser.y"
                                                                                   {push("/");}
-#line 2291 "y.tab.c"
+#line 2292 "y.tab.c"
     break;
 
   case 148:
-#line 421 "parser.y"
+#line 423 "parser.y"
                                                                                                                  {push("%");}
-#line 2297 "y.tab.c"
+#line 2298 "y.tab.c"
     break;
 
   case 149:
-#line 424 "parser.y"
+#line 426 "parser.y"
                                     {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2303 "y.tab.c"
+#line 2304 "y.tab.c"
     break;
 
   case 150:
-#line 425 "parser.y"
+#line 427 "parser.y"
                                   {if(yyvsp[0] == 1) yyval=1; else yyval=-1;}
-#line 2309 "y.tab.c"
+#line 2310 "y.tab.c"
     break;
 
   case 151:
-#line 429 "parser.y"
+#line 431 "parser.y"
                                      {
 
 							if(tip == 3)
@@ -2335,30 +2336,37 @@ yyreduce:
 										strcpy(tempo2, curid);
 
 			              }
-#line 2339 "y.tab.c"
+#line 2340 "y.tab.c"
     break;
 
   case 152:
-#line 454 "parser.y"
+#line 456 "parser.y"
                                            { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid);}
-#line 2345 "y.tab.c"
+#line 2346 "y.tab.c"
     break;
 
   case 153:
-#line 455 "parser.y"
+#line 457 "parser.y"
                                            {	
+													 char temp1[100] = "\0";
+													 strcpy(temp1, "*" );
+													 strcat(temp1, tempo);
+													 
+															top--;
+														//	printf("\n\n%s\n\n", tempo);
+													 push(temp1);
 													 if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
 			              		yyval = 1;
 			              		else
 			              		yyval = -1;
 
 												 }
-#line 2357 "y.tab.c"
+#line 2365 "y.tab.c"
     break;
 
   case 154:
-#line 466 "parser.y"
-                        {	 //printf("sum_expression\n\n\n");
+#line 475 "parser.y"
+                        {	 printf("sum_expression\n\n\n");
 				char temp1[100], temp2[100], temp3[100];
 												strcpy(temp1, "t");
 												char buffer[100];
@@ -2476,11 +2484,11 @@ cln(buffer, 100);
 
 			              	
 			}
-#line 2480 "y.tab.c"
+#line 2488 "y.tab.c"
     break;
 
   case 155:
-#line 586 "parser.y"
+#line 595 "parser.y"
                                                  {
 
 											//	printf("integer_constant\n\n\n");
@@ -2620,29 +2628,29 @@ cln(buffer, 100);
 											*/
 
 			              		}
-#line 2624 "y.tab.c"
+#line 2632 "y.tab.c"
     break;
 
   case 156:
-#line 729 "parser.y"
+#line 738 "parser.y"
                                              {if(yyvsp[-1]==1) yyval=1; else yyval=-1;}
-#line 2630 "y.tab.c"
+#line 2638 "y.tab.c"
     break;
 
   case 157:
-#line 730 "parser.y"
+#line 739 "parser.y"
                                {if(yyvsp[0]==-1) yyval=-1; else yyval=1;}
-#line 2636 "y.tab.c"
+#line 2644 "y.tab.c"
     break;
 
   case 158:
-#line 731 "parser.y"
+#line 740 "parser.y"
                                    {if(yyvsp[0]==1) yyval=1; else yyval=-1;}
-#line 2642 "y.tab.c"
+#line 2650 "y.tab.c"
     break;
 
   case 159:
-#line 734 "parser.y"
+#line 743 "parser.y"
                                         {
 
 			             if(!check_declaration(curid, "Function"))
@@ -2657,11 +2665,11 @@ cln(buffer, 100);
 			             yyval = -1;
                          call_params_count=0;
 			             }
-#line 2661 "y.tab.c"
+#line 2669 "y.tab.c"
     break;
 
   case 160:
-#line 749 "parser.y"
+#line 758 "parser.y"
                                                  { if(strcmp(currfunccall,"printf"))
 							{ 
 								if(getSTparamscount(currfunccall)!=call_params_count)
@@ -2672,77 +2680,77 @@ cln(buffer, 100);
 							}
 							callgen();
 						 }
-#line 2676 "y.tab.c"
+#line 2684 "y.tab.c"
     break;
 
   case 163:
-#line 764 "parser.y"
+#line 773 "parser.y"
                                                  { call_params_count++; }
-#line 2682 "y.tab.c"
+#line 2690 "y.tab.c"
     break;
 
   case 164:
-#line 765 "parser.y"
+#line 774 "parser.y"
                               { call_params_count++; }
-#line 2688 "y.tab.c"
+#line 2696 "y.tab.c"
     break;
 
   case 165:
-#line 767 "parser.y"
+#line 776 "parser.y"
                  {arggen(1);}
-#line 2694 "y.tab.c"
+#line 2702 "y.tab.c"
     break;
 
   case 166:
-#line 767 "parser.y"
+#line 776 "parser.y"
                                                  {arggen(2);}
-#line 2700 "y.tab.c"
+#line 2708 "y.tab.c"
     break;
 
   case 167:
-#line 767 "parser.y"
+#line 776 "parser.y"
                                                                                 {arggen(3);}
-#line 2706 "y.tab.c"
+#line 2714 "y.tab.c"
     break;
 
   case 168:
-#line 767 "parser.y"
+#line 776 "parser.y"
                                                                                                               {arggen(4);}
-#line 2712 "y.tab.c"
+#line 2720 "y.tab.c"
     break;
 
   case 169:
-#line 767 "parser.y"
+#line 776 "parser.y"
                                                                                                                                                 {arggen(5);}
-#line 2718 "y.tab.c"
+#line 2726 "y.tab.c"
     break;
 
   case 170:
-#line 770 "parser.y"
+#line 779 "parser.y"
                                                 {  insV(); codegencon(); yyval=1; }
-#line 2724 "y.tab.c"
+#line 2732 "y.tab.c"
     break;
 
   case 171:
-#line 771 "parser.y"
+#line 780 "parser.y"
                                                 {  insV(); codegencon();yyval=-1;}
-#line 2730 "y.tab.c"
+#line 2738 "y.tab.c"
     break;
 
   case 172:
-#line 772 "parser.y"
+#line 781 "parser.y"
                                                 {  insV(); codegencon();}
-#line 2736 "y.tab.c"
+#line 2744 "y.tab.c"
     break;
 
   case 173:
-#line 773 "parser.y"
+#line 782 "parser.y"
                                             {  insV(); codegencon();yyval=1; }
-#line 2742 "y.tab.c"
+#line 2750 "y.tab.c"
     break;
 
 
-#line 2746 "y.tab.c"
+#line 2754 "y.tab.c"
 
       default: break;
     }
@@ -2974,7 +2982,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 775 "parser.y"
+#line 784 "parser.y"
 
 
 extern FILE *yyin;
@@ -2995,14 +3003,15 @@ struct stack
 
 void push(char *x)
 {
+	
 	strcpy(s[++top].value,x);
 	
-//	printf("push:	");
+	/*printf("push:	");
 	for(int i=0 ; i<top ; i++)
 	{
-//		printf("%s	", s[i].value);
+		printf("%s	", s[i].value);
 	}
-//	printf("\n\n");
+	printf("\n\n");*/
 }
 
 void swap(char *x, char *y)
@@ -3076,12 +3085,7 @@ void codegen()
 	itoa(count,buffer,10);
 	strcat(temp,buffer);
 	printf("%s = %s %s ",temp,s[top-2].value,s[top-1].value);
-	if(tempo[0] != '\0')
-	{
-		printf("*%s\n", tempo);
-		cln(tempo, 100);
-	}
-	else
+	
 	{
 		printf("%s\n", s[top].value);
 	}
