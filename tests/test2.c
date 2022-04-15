@@ -2,12 +2,10 @@
 
 void main(int c)
 {
-    int a[12], b[13];
-    int i;
-		i=0;
-	//	a[i+1];
- //a[(i-2)*3] = a[1] + b[i+2];
-	 	i + i + i + a[i+1] + i + i + a[2] + a[i];
+    char a[12];
+    char i;
+		
+	  println(a[i]);
      //println(i, i+a[i]);
    // int i;
 	/*for( i = 0 ; i < 5 ; i++ )

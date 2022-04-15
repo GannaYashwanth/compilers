@@ -64,6 +64,8 @@
 	char tempo2[100] = "\0";
 	char tempo3[100] = "\0";
 	char typ;
+	int check = 1;
+	int chk = 0;
 	int tip=3;
 %}
 
@@ -226,14 +228,14 @@ print_stmt:	PRINTLN '(' print_args ')' {printf("print new line\n");}
 
 print_args:	
 		sum_expression ','	{
-					printf("print %s\n", temp);
+					printf("print %s %s\n", temp, curid);
 		}
 
 		print_args
 
 		|	sum_expression		{ 
-				printf("print %s\n", temp);
-		}
+				printf("print %s \n", tempo2 );
+		 }
 
 		| ;
 
@@ -408,19 +410,19 @@ relational_operators
 			: greaterthan_assignment_operator {push(">=");} | lessthan_assignment_operator {push("<=");} | greaterthan_operator {push(">");}| lessthan_operator {push("<");}| equality_operator {push("==");}| inequality_operator {push("!=");} ;
 
 sum_expression 
-			: sum_expression sum_operators term  {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen(); }
+			: sum_expression sum_operators  term  {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen(); }
 			| term {if($1 == 1) $$=1; else $$=-1;}
 
 sum_operators 
-			: add_operator { push("+");}
-			| subtract_operator {push("-");} ;
+			: add_operator { push("+"); chk=1; }
+			| subtract_operator {push("-"); chk=1;} ;
 
 term
-			: term MULOP factor {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			: term MULOP  factor { chk = 1 ; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			| factor {if($1 == 1) $$=1; else $$=-1;} ;
 
 MULOP 
-			: multiplication_operator {push("*");}| division_operator {push("/");} | modulo_operator {push("%");} ;
+			: multiplication_operator {push("*"); chk=1;}| division_operator {push("/"); chk=1;} | modulo_operator {push("%"); chk=1; } ;
 
 factor 
 			: immutable {if($1 == 1) $$=1; else $$=-1;} 
@@ -440,26 +442,27 @@ mutable
 						  push(curid);
 						  if(check_id_is_func(curid))
 						  {printf("Function name used as Identifier\n"); exit(8);}
-			              if(!checkscope(curid))
-			              {printf("%s\n",curid);printf("Undeclared\n");exit(0);} 
-			              if(!checkarray(curid))
-			              {printf("%s\n",curid);printf("Array ID has no subscript\n");exit(0);}
-			              if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
-			              $$ = 1;
-			              else
-			              $$ = -1;
+							if(!checkscope(curid))
+							{printf("%s\n",curid);printf("Undeclared\n");exit(0);} 
+							if(!checkarray(curid))
+							{printf("%s\n",curid);printf("Array ID has no subscript\n");exit(0);}
+							if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
+							$$ = 1;
+							else
+							$$ = -1;
 
-										cln(tempo2, 100);
-										strcpy(tempo2, curid);
+							
+							cln(tempo2, 100);
+							strcpy(tempo2, curid);
 
-			              }
-			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid);} '[' index ']' 
+							}
+			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid); chk=0; } '[' index ']' 
 			                   {	
 													 char temp1[100] = "\0";
 													 strcpy(temp1, "*" );
 													 strcat(temp1, tempo);
-
-															top--;
+															 check = 1;
+															
 														//	printf("\n\n%s\n\n", tempo);
 													 push(temp1);
 													 if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
@@ -501,7 +504,14 @@ cln(buffer, 100);
 												
 												printf("%s = %d \n", temp2, getSTarrSize(tempo));
 												
-												printf("%s = %s < %s \n", temp3, temp2, temp);
+												printf("%s = %s < ", temp3, temp2);
+												if(chk)
+												{
+													printf("%s\n", temp);	
+												}
+												else{
+													printf("%s\n", curid);
+												}
 												printf("IF not %s goto L%d \n", temp3, lno);
 
 cln(temp1, 100);
@@ -534,7 +544,16 @@ cln(buffer, 100);
 												strcat(temp3, buffer);
 												count++;
 
-												printf("%s = %s < 0\n", temp3, temp);
+												printf("%s = ", temp3);
+
+												if(chk)
+												{
+													printf("%s < 0\n", temp);
+													
+												}
+												else{
+													printf("%s < 0\n", curid);
+												}
 
 												printf("IF not %s goto L%d", temp3, lno);
 
@@ -568,7 +587,15 @@ cln(buffer, 100);
 												count++;
 
 												printf("%s \n", temp3);
-												printf("%s = %s * 4\n", temp3, temp);
+												printf("%s = ", temp3, temp);
+
+												if(chk)
+												{
+													printf("%s * 4\n", temp);
+												}
+												else{
+													printf("%s * 4\n", curid);
+												}
 
 												cln(temp2, 100);
 												cln(buffer, 100);
@@ -802,6 +829,12 @@ struct stack
 void push(char *x)
 {
 	
+	if(check)
+	{
+		if(s[top].value[0] != '+' && s[top].value[0] != '*' && s[top].value[0] != '/' && s[top].value[0] != '%' && s[top].value[0] != '-')
+		top--;
+		check = 0;
+	}
 	strcpy(s[++top].value,x);
 	
 	/*printf("push:	");
