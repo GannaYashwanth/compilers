@@ -56,6 +56,8 @@
 	void arggen();
 	void callgen();
 
+	int called_type=0;
+	int func_called = 0;
 	int arr_count=0;
 	int arr_size=0;
 	int params_count=0;
@@ -65,6 +67,8 @@
 	char tempo[100] = "\0";
 	char tempo2[100] = "\0";
 	char tempo3[100] = "\0";
+	char decl_id[100] = "\0";
+	char func_assign[100] = "\0";
 	char typ;
 	int check = 1;
 	int chk = 0;
@@ -73,6 +77,7 @@
 	int pc=0;
 	int inside=0;
 	int declaring = 0;
+	int decl_check=1;
 %}
 
 %nonassoc IF
@@ -130,10 +135,10 @@ declaration
 			| function_declaration
 
 variable_declaration
-			: type_specifier variable_declaration_list ';' 
+			: type_specifier  variable_declaration_list {decl_check=1;} ';' 
 
 variable_declaration_list
-			: variable_declaration_list ',' variable_declaration_identifier | variable_declaration_identifier;
+			: variable_declaration_list ',' {decl_check=1;} variable_declaration_identifier | variable_declaration_identifier;
 
 variable_declaration_identifier 
 			: identifier {if(duplicate(curid))
@@ -142,8 +147,29 @@ variable_declaration_identifier
 			insertSTnest(curid,currnest); 
 			ins(); 
 			char id[1000] = "\0";
-				getid_scope(id, curid);
-				printf("%s\n", id);
+			char y_type[10] = "\0";
+			char ch = gettype(curid, 0);
+			getid_scope(id, curid);
+			//	printf("%s 	%d\n\n", id, decl_check);
+				if(decl_check)
+				{
+
+						strcpy(decl_id, id);
+						decl_check=0;
+				}
+			if(ch == 'c')
+			{
+				strcpy(y_type, "char\0");
+			}
+			else if(ch == 'i')
+			{
+					strcpy(y_type, "int\0");
+			}
+			else{
+					strcpy(y_type, "float\0");
+			}
+				
+				printf("%s %s\n", y_type, id);
 			 } vdi   
 			  | array_identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi {	// printf("%s  %d\n\n\n", curid, arr_size);
 
@@ -162,13 +188,26 @@ variable_declaration_identifier
 						//	printf("%s \n", temp);
 							printf("%s = %d \n", temp, arr_size);
 							cln(id, 1000);
+							char y_type[10] = "\0";
+							char ch = gettype(curid, 0);
+							if(ch == 'c')
+							{
+								strcpy(y_type, "char\0");
+							}
+							else if(ch == 'i')
+							{
+									strcpy(y_type, "int\0");
+							}
+							else{
+									strcpy(y_type, "float\0");
+							}
 							getid_scope(id, curid);
-							printf("%s %s \n", id, temp);
+							printf("%s %s %s \n", y_type,id, temp);
 				}
 			
 			
 
-vdi : identifier_array_type | assignment_operator simple_expression  ; 
+vdi : identifier_array_type | assignment_operator simple_expression {inline_decl(); } ; 
 
 identifier_array_type
 			: '[' initilization_params
@@ -207,10 +246,10 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier identifier '('  { strcpy(currfunctype, curtype); strcpy(currfunc, curid); check_duplicate(curid); insertSTF(curid); ins(); };
+			: type_specifier identifier '('  { strcpy(currfunctype, curtype); strcpy(currfunc, curid); check_duplicate(curid); insertSTF(curid); ins(); funcgen(); printf("params start\n"); };
 
 function_declaration_param_statement
-			: {params_count=0;}params ')' {funcgen();} statement {funcgenend();};
+			: {params_count=0;}params ')' {printf("params end\n");} statement {funcgenend();};
 
 params 
 			: parameters_list { insertSTparamscount(currfunc, params_count); }| { insertSTparamscount(currfunc, params_count); };
@@ -226,7 +265,27 @@ parameters_identifier_list_breakup
 			| ;
 
 param_identifier 
-			: identifier { ins();insertSTnest(curid,1); params_count++; } param_identifier_breakup;
+			: identifier { ins();insertSTnest(curid,1); params_count++; 
+
+					char id[100] = "\0";
+					char y_type[10] = "\0";
+							char ch = gettype(curid, 0);
+							if(ch == 'c')
+							{
+								strcpy(y_type, "char\0");
+							}
+							else if(ch == 'i')
+							{
+									strcpy(y_type, "int\0");
+							}
+							else{
+									strcpy(y_type, "float\0");
+							}
+							strcpy(id, curid);
+							strcat(id, "@1");
+							printf("%s %s\n", y_type,id);
+			
+			 } param_identifier_breakup;
 
 param_identifier_breakup
 			: '[' ']'
@@ -437,7 +496,7 @@ array_int_declarations_breakup
 			| ;
 
 expression 
-			: mutable
+			:  mutable
 			assignment_operator {  push("=");  if(tempo[0] != '\0') {strcpy(tempo3, tempo);} } expression   {   
 																	  if($1==1 && $4==1) 
 																	  {	
@@ -445,7 +504,15 @@ expression
 			                                                          } 
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
-																																if(tempo3[0] != '\0')
+																																if(func_called && called_type==1)
+																																{
+																																	//printf("hello\n\n");
+																																	printf("%s = %s\n", func_assign, temp);
+																																	func_called = 0;
+																																	called_type = 0;
+																																	//return;
+																																}
+																																else if(tempo3[0] != '\0')
 																																{
 																																	// printf("%d\n", chk2);
 																																	//printf("%s 	%s\n", temp, tempo);
@@ -533,8 +600,8 @@ MULOP
 			: multiplication_operator {push("*"); chk=1; if(!inside) {pc=1; chk2=1; }}| division_operator {push("/"); chk=1; if(!inside) {pc=1; chk2=1; }} | modulo_operator {push("%"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 factor 
-			: immutable {if($1 == 1) $$=1; else $$=-1;} 
-			| mutable {if($1 == 1) $$=1; else $$=-1;} ;
+			: immutable {top-=0; if($1 == 1) $$=1; else $$=-1;} 
+			| mutable {if($1 == 1) $$=1; else $$=-1; called_type=0;} ;
 
 
 mutable 
@@ -546,8 +613,12 @@ mutable
 								tip = 1;
 							}
 							
-							
+							if(inside==0)
+							called_type = 1;
 						  push(curid);
+
+						
+							
 							
 						  if(check_id_is_func(curid))
 						  {printf("Function name used as Identifier\n"); exit(8);}
@@ -566,9 +637,13 @@ mutable
 							getid_scope(id, curid);
 							strcpy(tempo2, id);
 
+							cln(func_assign, 100);
+							strcpy(func_assign, id);
+
 							}
 			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid); chk=0; } '[' { inside=1; } index ']' { inside=0; }
 			                   {	
+													 called_type = 0;
 													 char temp1[100] = "\0";
 													 strcpy(temp1, "*" );
 													 strcat(temp1, tempo);
@@ -906,12 +981,12 @@ cln(buffer, 100);
 
 immutable 
 			: '(' expression ')' {if($2==1) $$=1; else $$=-1;}
-			| call {if($1==-1) $$=-1; else $$=1;}
+			|  call {if($1==-1) $$=-1; else $$=1; func_called=1;}
 			| constant {if($1==1) $$=1; else $$=-1;};
 
 call
-			: identifier '('{
-
+			:  identifier '('{
+									
 			             if(!check_declaration(curid, "Function"))
 			             { printf("Function not declared"); exit(0);} 
 			             insertSTF(curid); 
@@ -919,11 +994,11 @@ call
 						 if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
 						 {
 			             $$ = 1;
-			             }
-			             else
-			             $$ = -1;
-                         call_params_count=0;
-			             } 
+			        }
+							else
+							$$ = -1;
+                   call_params_count=0;
+			    } 
 			             arguments ')' 
 						 { if(strcmp(currfunccall,"printf"))
 							{ 
@@ -994,6 +1069,13 @@ void tostring(char *str, int num)
     str[len] = '\0';
 
 	//	return str;
+}
+
+void inline_decl()
+{
+	printf("%s = %s\n", decl_id, s[top].value);
+	top--;
+	cln(decl_id, 100);
 }
 
 void getid_scope(char id[], char *currid)
@@ -1301,7 +1383,7 @@ void arggen(int i)
 void callgen()
 {
 	printf("refparam result\n");
-	push("result");
+	push("$result");
 	printf("call %s, %d\n",currfunccall,call_params_count);
 }
 
