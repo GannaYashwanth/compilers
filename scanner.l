@@ -343,6 +343,18 @@
 		}
 	}
 
+	int check_present(char *s)
+	{
+		for(int i = 0 ; i < 1000 ; i++)
+		{
+			if(strcmp(ST[i].name,s)==0)
+			{
+				return 1;
+			}
+		}
+		return 0;
+	}
+
 	int check_id_is_func(char *s)
 	{
 		for(int i = 0 ; i < 1000 ; i++)
@@ -379,6 +391,7 @@
 			{				
 				if(ST[i].nestval == currnest)
 				{
+					// printf("line no: %d\n", currnest , yylineno);
 			        return 1;
 				}
 			}
@@ -465,7 +478,7 @@
 
 			printf("%10s | %15s\n",CT[i].name, CT[i].type);
 		}
-	}
+	}	
 	char curid[20];
 	char curtype[20];
 	char curval[20];

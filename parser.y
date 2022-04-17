@@ -17,6 +17,7 @@
 	extern char curval[20];
 	extern int currnest;
 	extern int yylval;
+	extern int yylineno;
 	void deletedata (int );
 	int checkscope(char*);
 	int check_id_is_func(char *);
@@ -25,6 +26,7 @@
 	void insertSTparamscount(char*, int);
 	int getSTparamscount(char*);
 	int check_duplicate(char*);
+	//int check_present(char*);
 	int check_declaration(char*, char *);
 	int check_params(char*);
 	int duplicate(char *s);
@@ -66,7 +68,11 @@
 	char typ;
 	int check = 1;
 	int chk = 0;
+	int chk2=0;
 	int tip=3;
+	int pc=0;
+	int inside=0;
+	int declaring = 0;
 %}
 
 %nonassoc IF
@@ -120,7 +126,7 @@ D
 			| ;
 
 declaration
-			: variable_declaration 
+			: 	variable_declaration 
 			| function_declaration
 
 variable_declaration
@@ -130,8 +136,20 @@ variable_declaration_list
 			: variable_declaration_list ',' variable_declaration_identifier | variable_declaration_identifier;
 
 variable_declaration_identifier 
-			: identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi   
+			: identifier {if(duplicate(curid))
+			{printf("Duplicate at line no. %d!!!	Variable	%s is already declared in this scope \n", yylineno, curid);
+			exit(0);}
+			insertSTnest(curid,currnest); 
+			ins(); 
+			char id[1000] = "\0";
+				getid_scope(id, curid);
+				printf("%s\n", id);
+			 } vdi   
 			  | array_identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi {	// printf("%s  %d\n\n\n", curid, arr_size);
+
+							char id[1000] = "\0";
+						/*	getid_scope(id, curid);
+							printf("%s\n", id);	*/
 
 						  insertSTarrSize(curid, arr_size);
 
@@ -139,10 +157,13 @@ variable_declaration_identifier
 							char buffer[100];
 							itoa(count, buffer, 10);
 							strcat(temp, buffer);
+							printf("%s\n", temp);
 							count++;
-							printf("%s \n", temp);
+						//	printf("%s \n", temp);
 							printf("%s = %d \n", temp, arr_size);
-							printf("%s %s \n", curid, temp);
+							cln(id, 1000);
+							getid_scope(id, curid);
+							printf("%s %s \n", id, temp);
 				}
 			
 			
@@ -228,13 +249,94 @@ print_stmt:	PRINTLN '(' print_args ')' {printf("print new line\n");}
 
 print_args:	
 		sum_expression ','	{
-					printf("print %s %s\n", temp, curid);
-		}
+					
+		if(tip == 2)
+				{	
+					// printf("%s 	%s 	%s \n\n\n", temp, tempo, tempo2);
+						if(typ == 'i')
+						{
+								printf("print int %s \n", tempo2);
+						}
+						else if(typ == 'c')
+						{
+								printf("print char %s \n", tempo2);
+						}
+						else if(typ == 'f')
+						{
+								printf("print float %s \n", tempo2);
+						}
+				}
+				else if(tip == 1)
+				{
+					
+					if(gettype(tempo2, 0) == 'i')
+					{
+							printf("print int %s \n", temp);
+					}
+					else if(gettype(tempo2, 0) == 'c')
+					{
+						printf("print char %s \n", temp);
+					}
+					else if(gettype(tempo2, 0) == 'f')
+					{
+							printf("print float %s \n", temp);
+					}
+				}
+
+				tip = 3;
+				cln(tempo2, 100);
+		 }
 
 		print_args
 
-		|	sum_expression		{ 
-				printf("print %s \n", tempo2 );
+		| sum_expression		{ 
+			
+			char var[100] = "\0";
+			if(pc = 1)
+			{
+				strcpy(var, temp);
+			}
+			else
+			{
+				strcpy(var, tempo2);
+			}
+				if(tip == 2)
+				{
+
+					 printf("%s hello	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
+						if(typ == 'i')
+						{
+								printf("print int %s \n", var);
+						}
+						else if(typ == 'c')
+						{
+								printf("print char %s \n", var);
+						}
+						else if(typ == 'f')
+						{
+								printf("print float %s \n", var);
+						}
+				}
+				else if(tip == 1)
+				{
+					 printf("%s	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
+					if(gettype(tempo2, 0) == 'i')
+					{
+							printf("print int %s \n", var);
+					}
+					else if(gettype(tempo2, 0) == 'c')
+					{
+						printf("print char %s \n", var);
+					}
+					else if(gettype(tempo2, 0) == 'f')
+					{
+							printf("print float %s \n", var);
+					}
+				}
+
+				pc = 0;
+				tip = 3;
+				cln(tempo2, 100);
 		 }
 
 		| ;
@@ -278,6 +380,7 @@ scan_stmt:	 SCAN '(' mutable ')' {
 									cln(tempo2, 100);
 
 							}
+
 
 compound_statement 
 			: {currnest++;} '{'  statment_list  '}' {deletedata(currnest);currnest--;}  ;
@@ -334,17 +437,22 @@ array_int_declarations_breakup
 			| ;
 
 expression 
-			: mutable 
-			assignment_operator { push("="); if(tempo[0] != '\0') {strcpy(tempo3, tempo);} } expression   {   
+			: mutable
+			assignment_operator {  push("=");  if(tempo[0] != '\0') {strcpy(tempo3, tempo);} } expression   {   
 																	  if($1==1 && $4==1) 
-																	  {
+																	  {	
 			                                                          $$=1;
 			                                                          } 
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
 																																if(tempo3[0] != '\0')
 																																{
+																																	// printf("%d\n", chk2);
+																																	//printf("%s 	%s\n", temp, tempo);
+																																	if(chk2)
 																																	printf("*%s = %s\n", tempo3, temp);
+																																	else
+																																	printf("*%s = *%s\n", tempo3, tempo);
 																																	cln(tempo3, 100);
 																																}
 																																else
@@ -394,12 +502,12 @@ simple_expression
 			| and_expression {if($1 == 1) $$=1; else $$=-1;};
 
 and_expression 
-			: and_expression AND_operator {push("&&");} unary_relation_expression  {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			: and_expression AND_operator {push("&&");} unary_relation_expression  {	if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			  |unary_relation_expression {if($1 == 1) $$=1; else $$=-1;} ;
 
 
 unary_relation_expression 
-			: exclamation_operator {push("!");} unary_relation_expression {if($2==1) $$=1; else $$=-1; codegen();} 
+			: exclamation_operator {push("!");} unary_relation_expression {		 $$=1;  codegen();} 
 			| regular_expression {if($1 == 1) $$=1; else $$=-1;} ;
 
 regular_expression 
@@ -414,15 +522,15 @@ sum_expression
 			| term {if($1 == 1) $$=1; else $$=-1;}
 
 sum_operators 
-			: add_operator { push("+"); chk=1; }
-			| subtract_operator {push("-"); chk=1;} ;
+			: add_operator { push("+"); chk=1; if(!inside) {pc=1; chk2=1;} }
+			| subtract_operator {push("-"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 term
 			: term MULOP  factor { chk = 1 ; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			| factor {if($1 == 1) $$=1; else $$=-1;} ;
 
 MULOP 
-			: multiplication_operator {push("*"); chk=1;}| division_operator {push("/"); chk=1;} | modulo_operator {push("%"); chk=1; } ;
+			: multiplication_operator {push("*"); chk=1; if(!inside) {pc=1; chk2=1; }}| division_operator {push("/"); chk=1; if(!inside) {pc=1; chk2=1; }} | modulo_operator {push("%"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 factor 
 			: immutable {if($1 == 1) $$=1; else $$=-1;} 
@@ -440,23 +548,26 @@ mutable
 							
 							
 						  push(curid);
+							
 						  if(check_id_is_func(curid))
 						  {printf("Function name used as Identifier\n"); exit(8);}
 							if(!checkscope(curid))
 							{printf("%s\n",curid);printf("Undeclared\n");exit(0);} 
 							if(!checkarray(curid))
-							{printf("%s\n",curid);printf("Array ID has no subscript\n");exit(0);}
+							{printf("%s => ",curid);printf("Array ID has no subscript at line no. %d\n", yylineno);exit(0);}
 							if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
 							$$ = 1;
 							else
 							$$ = -1;
 
-							
+						//	printf("%s 	%d\n\n\n", curid, $$);
 							cln(tempo2, 100);
-							strcpy(tempo2, curid);
+							char id[1000] = "\0";
+							getid_scope(id, curid);
+							strcpy(tempo2, id);
 
 							}
-			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid); chk=0; } '[' index ']' 
+			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid); chk=0; } '[' { inside=1; } index ']' { inside=0; }
 			                   {	
 													 char temp1[100] = "\0";
 													 strcpy(temp1, "*" );
@@ -475,12 +586,13 @@ mutable
 
 index:	sum_expression
 
-			{	 printf("sum_expression\n\n\n");
+			{	 //printf("sum_expression\n\n\n");
 				char temp1[100], temp2[100], temp3[100];
 												strcpy(temp1, "t");
 												char buffer[100];
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
+												printf("%s\n", temp1);
 												count++;
 
 cln(temp2, 100);
@@ -488,6 +600,7 @@ cln(buffer, 100);
 												strcpy(temp2, "t");
 												itoa(count, buffer, 10);
 												strcat(temp2, buffer);
+												printf("%s\n", temp2);
 												count++; 
 
 cln(temp3, 100);
@@ -495,12 +608,13 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
-												printf("%s \n", temp1);
+												//printf("%s \n", temp1);
 												printf("%s = 0 \n", temp1);
 
-												printf("%s \n", temp2);
+											//	printf("%s \n", temp2);
 												
 												printf("%s = %d \n", temp2, getSTarrSize(tempo));
 												
@@ -510,7 +624,9 @@ cln(buffer, 100);
 													printf("%s\n", temp);	
 												}
 												else{
-													printf("%s\n", curid);
+													char id[1000] = "\0";
+													getid_scope(id, curid);
+													printf("%s\n", id);
 												}
 												printf("IF not %s goto L%d \n", temp3, lno);
 
@@ -519,6 +635,7 @@ cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
+												printf("%s\n", temp1);
 												count++;
 
 												printf("%s = 'RUNTIME ERROR: Index out of Bounds' \n", temp1);
@@ -528,6 +645,7 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 												printf("la %s %s \n", temp3, temp1);
@@ -542,6 +660,7 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 												printf("%s = ", temp3);
@@ -552,16 +671,19 @@ cln(buffer, 100);
 													
 												}
 												else{
-													printf("%s < 0\n", curid);
+													char id[1000] = "\0";
+													getid_scope(id, curid);
+													printf("%s < 0\n", id);
 												}
 
-												printf("IF not %s goto L%d", temp3, lno);
+												printf("IF not %s goto L%d\n", temp3, lno);
 
 cln(temp1, 100);
 cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
+												printf("%s\n", temp1);
 												count++;
 
 												printf("%s = 'RUNTIME ERROR: Index is negative' \n", temp1);
@@ -571,6 +693,7 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 												printf("la %s %s \n", temp3, temp1);
@@ -584,9 +707,10 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
-												printf("%s \n", temp3);
+											//	printf("%s \n", temp3);
 												printf("%s = ", temp3, temp);
 
 												if(chk)
@@ -594,7 +718,9 @@ cln(buffer, 100);
 													printf("%s * 4\n", temp);
 												}
 												else{
-													printf("%s * 4\n", curid);
+													char id[1000] = "\0";
+													getid_scope(id, curid);
+													printf("%s * 4\n", id);
 												}
 
 												cln(temp2, 100);
@@ -602,10 +728,13 @@ cln(buffer, 100);
 												strcpy(temp2, "t");
 												itoa(count, buffer, 10);
 												strcat(temp2, buffer);
+												printf("%s\n", temp2);
 												count++;
 
-												printf("%s \n", temp2);
-												printf("%s = %s + %s \n", temp2, tempo , temp3);
+											//	printf("%s \n", temp2);
+												char id[1000] = "\0";
+													getid_scope(id, tempo);
+												printf("%s = %s + %s \n", temp2, id , temp3);
 
 												cln(tempo2, 100);
 												strcpy(tempo2, "*");
@@ -627,6 +756,7 @@ cln(buffer, 100);
 												char buffer[100];
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
+												printf("%s\n", temp1);
 												count++;
 
 						cln(temp2, 100);
@@ -635,6 +765,7 @@ cln(buffer, 100);
 												strcpy(temp2, "t");
 												itoa(count, buffer, 10);
 												strcat(temp2, buffer);
+												printf("%s\n", temp2);
 												count++; 
 
 			cln(temp3, 100);
@@ -642,6 +773,7 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 	cln(temp4, 100);
@@ -649,12 +781,13 @@ cln(buffer, 100);
 												strcpy(temp4, "t");
 												itoa(count, buffer, 10);
 												strcat(temp4, buffer);
+												printf("%s\n", temp4);
 												count++;
 
-												printf("%s \n", temp1);
+											//	printf("%s \n", temp1);
 												printf("%s = 0 \n", temp1);
 
-												printf("%s \n", temp2);
+											//	printf("%s \n", temp2);
 												//printf("%s \n", curid);
 												//int e = getSTarrSize(curid);
 												
@@ -671,6 +804,7 @@ cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
+												printf("%s\n", temp1);
 												count++;
 
 												printf("%s = 'RUNTIME ERROR: Index out of Bounds' \n", temp1);
@@ -680,6 +814,7 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 												printf("la %s %s \n", temp3, temp1);
@@ -694,17 +829,19 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 												printf("%s = %s < 0\n", temp3, temp4);
 
-												printf("IF not %s goto L%d", temp3, lno);
+												printf("IF not %s goto L%d\n", temp3, lno);
 
 cln(temp1, 100);
 cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
+												printf("%s\n", temp1);
 												count++;
 
 												printf("%s = 'RUNTIME ERROR: Index is negative' \n", temp1);
@@ -714,6 +851,7 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
 												printf("la %s %s \n", temp3, temp1);
@@ -727,9 +865,10 @@ cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
+												printf("%s\n", temp3);
 												count++;
 
-												printf("%s \n", temp3);
+												//printf("%s \n", temp3);
 												printf("%s = %s * 4\n", temp3, temp4);
 
 												cln(temp2, 100);
@@ -737,10 +876,14 @@ cln(buffer, 100);
 												strcpy(temp2, "t");
 												itoa(count, buffer, 10);
 												strcat(temp2, buffer);
+												printf("%s\n", temp2);
 												count++;
 
-												printf("%s \n", temp2);
-												printf("%s = %s + %s \n", temp2, curid , temp3);
+											//	printf("%s \n", temp2);
+													char id[1000] = "\0";
+													getid_scope(id, curid);
+												printf("%s = %s + %s \n", temp2, id , temp3);
+
 
 												cln(tempo2, 100);
 												strcpy(tempo2, "*");
@@ -821,14 +964,77 @@ void printCT();
 
 struct stack
 {
-	char value[100];
+	char value[1000];
 	int labelvalue;
-}s[100],label[100];
+}s[10000],label[10000];
+
+void tostring(char *str, int num)
+{
+    int i, rem, len = 0, n;
+
+		if(num == 0)
+		{
+			str[0] = '0';
+			str[1] = '\0';
+			return;
+		}
+		
+    n = num;
+    while (n != 0)
+    {
+        len++;
+        n /= 10;
+    }
+    for (i = 0; i < len; i++)
+    {
+        rem = num % 10;
+        num = num / 10;
+        str[len - (i + 1)] = rem + '0';
+    }
+    str[len] = '\0';
+
+	//	return str;
+}
+
+void getid_scope(char id[], char *currid)
+{
+	int safety = currnest;
+	//printf("%s\n\n", currid);
+	while(currnest >= 0)
+	{
+		if(duplicate(currid))
+			break;
+		currnest--;
+	}
+
+	char str[100] = "\0";
+	strcpy(id, currid);
+	strcat(id, "@");
+	// printf("%s\n\n", tostring(currnest));
+	tostring(str, currnest);
+	strcat(id, str);
+
+	//printf("%d\n\n", currnest);
+	currnest = safety;
+	//return id;
+}
+
 
 
 void push(char *x)
 {
-	
+	char y[1000] = "\0";
+	strcpy(y, x);
+	int change=0;
+//	printf("%d	%s\n\n", check_present(x), x);
+	if(strcmp(x, curid) == 0)
+	{
+		char id[1000] = "\0";
+		getid_scope(id, curid);
+		change=1;
+		strcpy(x, id);
+	}
+
 	if(check)
 	{
 		if(s[top].value[0] != '+' && s[top].value[0] != '*' && s[top].value[0] != '/' && s[top].value[0] != '%' && s[top].value[0] != '-')
@@ -836,7 +1042,8 @@ void push(char *x)
 		check = 0;
 	}
 	strcpy(s[++top].value,x);
-	
+	if(change)
+	strcpy(x, y);
 	/*printf("push:	");
 	for(int i=0 ; i<top ; i++)
 	{
@@ -915,6 +1122,18 @@ void codegen()
 	char buffer[100];
 	itoa(count,buffer,10);
 	strcat(temp,buffer);
+	printf("%s \n", temp);
+
+	if(strcmp(s[top-1].value, "!") == 0)
+	{
+		printf("%s = %s %s \n",temp,s[top-1].value, s[top].value);
+
+		top = top - 1;
+		strcpy(s[top].value,temp);
+		count++;
+		return;
+	}
+
 	printf("%s = %s %s ",temp,s[top-2].value,s[top-1].value);
 	
 	{
@@ -931,6 +1150,7 @@ void codegencon()
 	char buffer[100];
 	itoa(count,buffer,10);
 	strcat(temp,buffer);
+	printf("%s \n", temp);
 	printf("%s = %s\n",temp,curval);
 	push(temp);
 	count++;
@@ -962,6 +1182,7 @@ void genunary()
 	char buffer[100];
 	itoa(count, buffer, 10);
 	strcat(temp, buffer);
+	printf("%s \n", temp);
 	count++;
 
 	if(strcmp(temp2,"--")==0)
@@ -981,9 +1202,16 @@ void genunary()
 
 void codeassign()
 {
+	/*
+	for(int i=0 ; i<=top ; i++)
+	{
+		printf("%s\n\n", s[top].value);
+	}*/
 	printf("%s = %s\n",s[top-2].value,s[top].value);
 	top = top - 2;
 }
+
+
 
 void label1()
 {
@@ -1092,9 +1320,9 @@ int main(int argc , char **argv)
 		printf("%30s %s\n", " ", "------------");
 		printST();
 
-		printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
+	//	printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "--------------");
-		printCT();
+	//	printCT();
 	}
 }
 
