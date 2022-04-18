@@ -15,6 +15,7 @@
 	extern char curid[20];
 	extern char curtype[20];
 	extern char curval[20];
+	extern char print_str[1000];
 	extern int currnest;
 	extern int yylval;
 	extern int yylineno;
@@ -69,19 +70,22 @@
 	char tempo3[100] = "\0";
 	char decl_id[100] = "\0";
 	char func_assign[100] = "\0";
+	
 	char typ;
 	int check = 1;
 	int chk = 0;
 	int chk2=0;
 	int tip=3;
+	int print_chk=1;
 	int pc=0;
 	int inside=0;
 	int declaring = 0;
 	int decl_check=1;
+	int print_expr=0;
 %}
 
 %nonassoc IF
-%token INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED STRUCT SCAN PRINT PRINTLN
+%token INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED STRUCT SCAN PRINT PRINTLN	PRINT_STR
 %token RETURN MAIN
 %token VOID
 %token WHILE FOR DO 
@@ -308,10 +312,28 @@ print_stmt:	PRINTLN '(' print_args ')' {printf("print new line\n");}
 
 print_args:	
 		sum_expression ','	{
-					
-		if(tip == 2)
-				{	
-					// printf("%s 	%s 	%s \n\n\n", temp, tempo, tempo2);
+
+				char var[100] = "\0";
+			if(pc = 1)
+			{
+				strcpy(var, temp);
+			}
+			else
+			{
+				strcpy(var, tempo2);
+			}
+
+		//	printf("%d\n\n", tip);
+				if(print_expr==1)
+				{
+					//printf("ttt\n\n\n");
+					print_expr=0;
+					printf("print int %s\n", temp);
+				}
+				else if(tip == 2)
+				{
+
+					 // printf("%s hello	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
 						if(typ == 'i')
 						{
 								printf("print int %s \n", tempo2);
@@ -327,23 +349,31 @@ print_args:
 				}
 				else if(tip == 1)
 				{
-					
-					if(gettype(tempo2, 0) == 'i')
+					// printf("%s	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
+					 	char var[100] = "\0";
+											for(int i=0 ; i<100 && tempo2[i]!='@' ; i++)
+											{
+												var[i] = tempo2[i];
+											}
+
+					if(gettype(var, 0) == 'i')
 					{
-							printf("print int %s \n", temp);
+							printf("print int %s \n", tempo2);
 					}
-					else if(gettype(tempo2, 0) == 'c')
+					else if(gettype(var, 0) == 'c')
 					{
-						printf("print char %s \n", temp);
+						printf("print char %s \n", tempo2);
 					}
-					else if(gettype(tempo2, 0) == 'f')
+					else if(gettype(var, 0) == 'f')
 					{
-							printf("print float %s \n", temp);
+							printf("print float %s \n", tempo2);
 					}
 				}
 
+				pc = 0;
 				tip = 3;
-				cln(tempo2, 100);
+				cln(tempo2, 100);	
+			
 		 }
 
 		print_args
@@ -359,37 +389,51 @@ print_args:
 			{
 				strcpy(var, tempo2);
 			}
-				if(tip == 2)
+
+		//	printf("%d\n\n", tip);
+				if(print_expr==1)
+				{
+				///	printf("ttt\n\n\n");
+					print_expr=0;
+					printf("print int %s\n", temp);
+				}
+				else if(tip == 2)
 				{
 
-					 printf("%s hello	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
+					 // printf("%s hello	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
 						if(typ == 'i')
 						{
-								printf("print int %s \n", var);
+								printf("print int %s \n", tempo2);
 						}
 						else if(typ == 'c')
 						{
-								printf("print char %s \n", var);
+								printf("print char %s \n", tempo2);
 						}
 						else if(typ == 'f')
 						{
-								printf("print float %s \n", var);
+								printf("print float %s \n", tempo2);
 						}
 				}
 				else if(tip == 1)
 				{
-					 printf("%s	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
-					if(gettype(tempo2, 0) == 'i')
+					// printf("%s	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
+					 	char var[100] = "\0";
+											for(int i=0 ; i<100 && tempo2[i]!='@' ; i++)
+											{
+												var[i] = tempo2[i];
+											}
+
+					if(gettype(var, 0) == 'i')
 					{
-							printf("print int %s \n", var);
+							printf("print int %s \n", tempo2);
 					}
-					else if(gettype(tempo2, 0) == 'c')
+					else if(gettype(var, 0) == 'c')
 					{
-						printf("print char %s \n", var);
+						printf("print char %s \n", tempo2);
 					}
-					else if(gettype(tempo2, 0) == 'f')
+					else if(gettype(var, 0) == 'f')
 					{
-							printf("print float %s \n", var);
+							printf("print float %s \n", tempo2);
 					}
 				}
 
@@ -398,10 +442,25 @@ print_args:
 				cln(tempo2, 100);
 		 }
 
-		| ;
+		| PRINT_STR {
+				printf("print %s\n", print_str);
+				cln(print_str, 1000);
+			} ;
+
+		|	PRINT_STR ','
+			{
+				printf("print %s\n", print_str);
+				cln(print_str, 1000);
+			}
+			
+			print_args
+
+		
+		|	;
 
 scan_stmt:	 SCAN '(' mutable ')' {
 
+								//printf("%s --- %d \n\n", tempo2, tip);
 								//	printf("%c\n\n", typ);
 									if(tip == 2)
 									{
@@ -420,16 +479,22 @@ scan_stmt:	 SCAN '(' mutable ')' {
 									}
 									else if(tip == 1)
 									{
-										//printf("%s\n", curid);
-											if(gettype(tempo2,0) == 'i')
+											//printf("%d\n", gettype(tempo2,0));
+											char var[100] = "\0";
+											for(int i=0 ; i<100 && tempo2[i]!='@' ; i++)
+											{
+												var[i] = tempo2[i];
+											}
+
+											if(gettype(var,0) == 'i')
 											{
 													printf("scan int %s \n", tempo2);
 											}
-											else if(gettype(tempo2,0) == 'c')
+											else if(gettype(var,0) == 'c')
 											{
 													printf("scan char %s \n", tempo2);
 											}
-											else if(gettype(tempo2,0) == 'f')
+											else if(gettype(var,0) == 'f')
 											{
 													printf("scan float %s \n", tempo2);
 											}
@@ -464,7 +529,9 @@ iterative_statements
 			| FOR '(' expression ';' {label4();} simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
 			| {label4();}DO statement WHILE '(' simple_expression ')'{label1();label5();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
-			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
+			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}
+				printf("return\n");
+			}
 			| RETURN expression ';' { 	if(!strcmp(currfunctype, "void"))
 										{ 
 											yyerror("Function is void");
@@ -475,6 +542,7 @@ return_statement
 											printf("Expression doesn't match return type of function\n"); exit(0);
 										}
 
+											{printf("return\n");}
 									};
 
 break_statement 
@@ -484,16 +552,44 @@ string_initilization
 			: assignment_operator string_constant {insV();} ;
 
 array_initialization
-			: assignment_operator '{' array_int_declarations '}' {if(arr_count > arr_size) {printf("initilization of array with too many variables on line no %d\n"); exit(0);}
+			: assignment_operator '{' { 
+
+				strcpy(temp,"t");
+				char buffer[100];
+				itoa(count,buffer,10);
+				strcat(temp,buffer);
+				printf("%s \n", temp);
+				count++;
+
+				strcpy(tempo,"t");
+				cln(buffer, 100);
+				itoa(count,buffer,10);
+				strcat(tempo,buffer);
+				printf("%s \n", tempo);
+				count++;
+
+			 } array_int_declarations '}' {if(arr_count > arr_size) {printf("initilization of array with too many variables on line no %d\n"); exit(0);}
+
+			
+
 			arr_count = arr_size = 0;
 			};
 
 array_int_declarations
-			: integer_constant {arr_count++;} array_int_declarations_breakup;
+			: integer_constant {
+
+						char id[100] = "\0";
+						getid_scope(id, curid);
+
+						printf("%s = %d * 4\n", temp, arr_count);
+						printf("%s = %s + %s\n", tempo, id, temp);
+						printf("*%s = %s\n", tempo, curval);
+
+						arr_count++;} array_int_declarations_breakup;
 
 array_int_declarations_breakup
 			: ',' array_int_declarations 
-			| ;
+			|  {  insertSTarrSize(curid, arr_size); };
 
 expression 
 			:  mutable
@@ -585,8 +681,9 @@ relational_operators
 			: greaterthan_assignment_operator {push(">=");} | lessthan_assignment_operator {push("<=");} | greaterthan_operator {push(">");}| lessthan_operator {push("<");}| equality_operator {push("==");}| inequality_operator {push("!=");} ;
 
 sum_expression 
-			: sum_expression sum_operators  term  {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen(); }
-			| term {if($1 == 1) $$=1; else $$=-1;}
+			: sum_expression sum_operators  term  {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();    
+				if(print_chk) print_expr=1;}
+			| term {if($1 == 1) $$=1; else $$=-1;  } 
 
 sum_operators 
 			: add_operator { push("+"); chk=1; if(!inside) {pc=1; chk2=1;} }
@@ -610,6 +707,7 @@ mutable
 							if(tip == 3)
 							{
 								typ = gettype(curid, 0);
+							//	printf("ssss\n\n");
 								tip = 1;
 							}
 							
@@ -641,7 +739,7 @@ mutable
 							strcpy(func_assign, id);
 
 							}
-			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid); chk=0; } '[' { inside=1; } index ']' { inside=0; }
+			| array_identifier { typ = gettype(curid, 0); tip=2; if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);} strcpy(tempo, curid); chk=0; } '[' { inside=1; print_chk=0;} index ']' { inside=0; print_chk=1;}
 			                   {	
 													 called_type = 0;
 													 char temp1[100] = "\0";
@@ -670,16 +768,16 @@ index:	sum_expression
 												printf("%s\n", temp1);
 												count++;
 
-cln(temp2, 100);
-cln(buffer, 100);
+												cln(temp2, 100);
+												cln(buffer, 100);
 												strcpy(temp2, "t");
 												itoa(count, buffer, 10);
 												strcat(temp2, buffer);
 												printf("%s\n", temp2);
 												count++; 
 
-cln(temp3, 100);
-cln(buffer, 100);
+												cln(temp3, 100);
+												cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -705,8 +803,8 @@ cln(buffer, 100);
 												}
 												printf("IF not %s goto L%d \n", temp3, lno);
 
-cln(temp1, 100);
-cln(buffer, 100);
+												cln(temp1, 100);
+												cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
@@ -715,8 +813,8 @@ cln(buffer, 100);
 
 												printf("%s = 'RUNTIME ERROR: Index out of Bounds' \n", temp1);
 
-cln(temp3, 100);
-cln(buffer, 100);
+												cln(temp3, 100);
+												cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -730,8 +828,8 @@ cln(buffer, 100);
 
 												printf("L%d: \n", lno++);
 
-cln(temp3, 100);
-cln(buffer, 100);
+												cln(temp3, 100);
+												cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -753,8 +851,8 @@ cln(buffer, 100);
 
 												printf("IF not %s goto L%d\n", temp3, lno);
 
-cln(temp1, 100);
-cln(buffer, 100);
+													cln(temp1, 100);
+													cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
@@ -763,8 +861,8 @@ cln(buffer, 100);
 
 												printf("%s = 'RUNTIME ERROR: Index is negative' \n", temp1);
 
-cln(temp3, 100);
-cln(buffer, 100);
+											cln(temp3, 100);
+											cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -834,8 +932,8 @@ cln(buffer, 100);
 												printf("%s\n", temp1);
 												count++;
 
-						cln(temp2, 100);
-						cln(buffer, 100);
+											cln(temp2, 100);
+											cln(buffer, 100);
 
 												strcpy(temp2, "t");
 												itoa(count, buffer, 10);
@@ -843,16 +941,16 @@ cln(buffer, 100);
 												printf("%s\n", temp2);
 												count++; 
 
-			cln(temp3, 100);
-			cln(buffer, 100);
+												cln(temp3, 100);
+												cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
 												printf("%s\n", temp3);
 												count++;
 
-	cln(temp4, 100);
-	cln(buffer, 100);
+												cln(temp4, 100);
+												cln(buffer, 100);
 												strcpy(temp4, "t");
 												itoa(count, buffer, 10);
 												strcat(temp4, buffer);
@@ -874,8 +972,8 @@ cln(buffer, 100);
 												printf("%s = %s < %s \n", temp3, temp2, temp4);
 												printf("IF not %s goto L%d \n", temp3, lno);
 
-cln(temp1, 100);
-cln(buffer, 100);
+												cln(temp1, 100);
+												cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
@@ -884,8 +982,8 @@ cln(buffer, 100);
 
 												printf("%s = 'RUNTIME ERROR: Index out of Bounds' \n", temp1);
 
-cln(temp3, 100);
-cln(buffer, 100);
+													cln(temp3, 100);
+													cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -899,8 +997,8 @@ cln(buffer, 100);
 
 												printf("L%d: \n", lno++);
 
-cln(temp3, 100);
-cln(buffer, 100);
+												cln(temp3, 100);
+												cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -911,8 +1009,8 @@ cln(buffer, 100);
 
 												printf("IF not %s goto L%d\n", temp3, lno);
 
-cln(temp1, 100);
-cln(buffer, 100);
+											cln(temp1, 100);
+											cln(buffer, 100);
 												strcpy(temp1, "t");
 												itoa(count, buffer, 10);
 												strcat(temp1, buffer);
@@ -921,8 +1019,8 @@ cln(buffer, 100);
 
 												printf("%s = 'RUNTIME ERROR: Index is negative' \n", temp1);
 
-cln(temp3, 100);
-cln(buffer, 100);
+												cln(temp3, 100);
+												cln(buffer, 100);
 												strcpy(temp3, "t");
 												itoa(count, buffer, 10);
 												strcat(temp3, buffer);
@@ -982,7 +1080,7 @@ cln(buffer, 100);
 immutable 
 			: '(' expression ')' {if($2==1) $$=1; else $$=-1;}
 			|  call {if($1==-1) $$=-1; else $$=1; func_called=1;}
-			| constant {if($1==1) $$=1; else $$=-1;};
+			| constant {if($1==1) $$=1; else $$=-1; if(print_chk) print_expr=1;};
 
 call
 			:  identifier '('{

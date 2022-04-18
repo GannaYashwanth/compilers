@@ -221,11 +221,14 @@
 
 	void insertSTarrSize(char *s, int count1)
 	{
+		if(count1 == 0)
+		return;
 
 		for(int i = 0 ; i < 1001 ; i++)
 		{
 			if(strcmp(ST[i].name,s)==0 )
 			{
+			//	printf("%s %d\n\n", s, count1);
 				ST[i].params_count = count1;
 				return;
 			}
@@ -479,9 +482,11 @@
 			printf("%10s | %15s\n",CT[i].name, CT[i].type);
 		}
 	}	
-	char curid[20];
-	char curtype[20];
-	char curval[20];
+	char curid[200];
+	char curtype[200];
+	char curval[200];
+	char print_str[1000] = "\0";
+
 
 %}
 
@@ -506,6 +511,7 @@ IN "include"
 ":"				{ return(':'); }
 "."				{ return('.'); }
 
+\`[^`]*\`					{strcpy(print_str, yytext);	return PRINT_STR;}
 "scan"/\(.*\)		{return SCAN;}
 "println"/\(.*\)	{return PRINTLN;}
 "print"/\(.*\)	{return PRINT;}
