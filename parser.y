@@ -61,6 +61,7 @@
 	int func_called = 0;
 	int arr_count=0;
 	int arr_size=0;
+	char arr_type;
 	int params_count=0;
 	int call_params_count=0;
 	int top = 0,count=0,ltop=0,lno=0;
@@ -82,6 +83,7 @@
 	int declaring = 0;
 	int decl_check=1;
 	int print_expr=0;
+	int can_use_func=0;
 %}
 
 %nonassoc IF
@@ -175,12 +177,30 @@ variable_declaration_identifier
 				
 				printf("%s %s\n", y_type, id);
 			 } vdi   
-			  | array_identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi {	// printf("%s  %d\n\n\n", curid, arr_size);
+			  | array_identifier { if(duplicate(curid)){printf("Duplicate\n");exit(0);}
+				insertSTnest(curid,currnest); ins(); 
+				if(gettype(curid, 0) == 'i') arr_type='i'; else arr_type = 'c'; 
+				//	printf("%s %c -- %c!!!!!!\n\n\n",  curid, arr_type, gettype(curid, 0));
+					
+				} vdi {	// printf("%s  %d\n\n\n", curid, arr_size);
 
-							char id[1000] = "\0";
-						/*	getid_scope(id, curid);
-							printf("%s\n", id);	*/
+						
+						arr_size = 0;
+				}
+			
+			
 
+vdi : identifier_array_type | assignment_operator {can_use_func = 1; } simple_expression {can_use_func = 0; inline_decl(); } ; 
+
+identifier_array_type
+			: '[' initilization_params
+			| ;
+
+initilization_params
+			: integer_constant {arr_size = yylval; 
+				char id[1000] = "\0";
+						/*	getid_scope(id, curid);*/
+								
 						  insertSTarrSize(curid, arr_size);
 
 							strcpy(temp, "t");
@@ -207,23 +227,13 @@ variable_declaration_identifier
 							}
 							getid_scope(id, curid);
 							printf("%s %s %s \n", y_type,id, temp);
-				}
-			
-			
-
-vdi : identifier_array_type | assignment_operator simple_expression {inline_decl(); } ; 
-
-identifier_array_type
-			: '[' initilization_params
-			| ;
-
-initilization_params
-			: integer_constant {arr_size = yylval; } ']' initilization {if($$ < 1) {printf("Wrong array size\n"); exit(0);} }
+			} ']'  initilization {if($$ < 1) {printf("Wrong array size\n"); exit(0);} }
 			| ']' string_initilization;
 
 initilization
 			: string_initilization
-			| array_initialization
+			| array_int_initialization
+			| array_char_initialization
 			| ;
 
 type_specifier 
@@ -286,7 +296,7 @@ param_identifier
 									strcpy(y_type, "float\0");
 							}
 							strcpy(id, curid);
-							strcat(id, "@1");
+							strcat(id, "._.1");
 							printf("%s %s\n", y_type,id);
 			
 			 } param_identifier_breakup;
@@ -305,9 +315,9 @@ io_statement:	scan_stmt
 						|	print_stmt
 						 ;
 
-print_stmt:	PRINTLN '(' print_args ')' {printf("print new line\n");}
+print_stmt:	PRINTLN '(' {can_use_func=1; } print_args ')' { can_use_func=0; printf("print new line\n");}
 			
-					| PRINT '(' print_args ')'
+					| PRINT '(' {can_use_func=1;} print_args {can_use_func=0; }')'
 					;
 
 print_args:	
@@ -351,7 +361,7 @@ print_args:
 				{
 					// printf("%s	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
 					 	char var[100] = "\0";
-											for(int i=0 ; i<100 && tempo2[i]!='@' ; i++)
+											for(int i=0 ; i<100 && tempo2[i]!='.' ; i++)
 											{
 												var[i] = tempo2[i];
 											}
@@ -418,7 +428,7 @@ print_args:
 				{
 					// printf("%s	-- %s --	%s -- \n\n\n", temp, tempo, tempo2);
 					 	char var[100] = "\0";
-											for(int i=0 ; i<100 && tempo2[i]!='@' ; i++)
+											for(int i=0 ; i<100 && tempo2[i]!='.' ; i++)
 											{
 												var[i] = tempo2[i];
 											}
@@ -481,7 +491,7 @@ scan_stmt:	 SCAN '(' mutable ')' {
 									{
 											//printf("%d\n", gettype(tempo2,0));
 											char var[100] = "\0";
-											for(int i=0 ; i<100 && tempo2[i]!='@' ; i++)
+											for(int i=0 ; i<100 && tempo2[i]!='.' ; i++)
 											{
 												var[i] = tempo2[i];
 											}
@@ -518,16 +528,16 @@ expression_statment
 			| ';' ;
 
 conditional_statements 
-			: IF '(' simple_expression ')' {label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label2();}  conditional_statements_breakup;
+			: IF '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label2();}  conditional_statements_breakup;
 
 conditional_statements_breakup
 			: ELSE statement {label3();}
 			| {label3();};
 
 iterative_statements 
-			: WHILE '(' {label4();} simple_expression ')' {label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
-			| FOR '(' expression ';' {label4();} simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
-			| {label4();}DO statement WHILE '(' simple_expression ')'{label1();label5();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
+			: WHILE '(' { can_use_func = 1; label4();} simple_expression ')' {can_use_func = 0; label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
+			| FOR '(' expression ';' {label4(); can_use_func = 1; }  simple_expression ';' {can_use_func = 0; label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
+			| {label4();}DO statement WHILE '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();label5();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}
 				printf("return\n");
@@ -551,9 +561,16 @@ break_statement
 string_initilization
 			: assignment_operator string_constant {insV();} ;
 
-array_initialization
-			: assignment_operator '{' { 
+array_int_initialization
+			:  assignment_operator  '{' { 
 
+			//	printf("currently in int initilization\n\n\n");
+
+				if(arr_type != 'i')
+				{
+					printf("Error!!! using the integer initilization syntax for a character array on lineno: %d", yylineno);
+					exit(0);
+				}
 				strcpy(temp,"t");
 				char buffer[100];
 				itoa(count,buffer,10);
@@ -572,8 +589,40 @@ array_initialization
 
 			
 
-			arr_count = arr_size = 0;
-			};
+			arr_count = 0;
+			}
+
+array_char_initialization:
+		 tilde_operator	assignment_operator '{' { 
+
+			 //printf("currently in char initilization %c--\n\n\n", arr_type);
+
+				if(arr_type != 'c')
+				{
+					printf("Error!!! using the character initilization syntax for an integer array on lineno: %d", yylineno);
+					exit(0);
+				}
+				strcpy(temp,"t");
+				char buffer[100];
+				itoa(count,buffer,10);
+				strcat(temp,buffer);
+				printf("%s \n", temp);
+				count++;
+
+				strcpy(tempo,"t");
+				cln(buffer, 100);
+				itoa(count,buffer,10);
+				strcat(tempo,buffer);
+				printf("%s \n", tempo);
+				count++;
+
+			 } array_char_declarations '}' {if(arr_count > arr_size) {printf("initilization of array with too many variables on line no %d\n"); exit(0);}
+
+			
+
+			arr_count = 0;
+			}
+			;
 
 array_int_declarations
 			: integer_constant {
@@ -591,9 +640,25 @@ array_int_declarations_breakup
 			: ',' array_int_declarations 
 			|  {  insertSTarrSize(curid, arr_size); };
 
+array_char_declarations
+			: character_constant {
+
+						char id[100] = "\0";
+						getid_scope(id, curid);
+
+						printf("%s = %d * 1\n", temp, arr_count);
+						printf("%s = %s + %s\n", tempo, id, temp);
+						printf("*%s = %s\n", tempo, curval);
+
+						arr_count++;} array_char_declarations_breakup;
+
+array_char_declarations_breakup
+			: ',' array_char_declarations 
+			|  {  insertSTarrSize(curid, arr_size); };
+
 expression 
 			:  mutable
-			assignment_operator {  push("=");  if(tempo[0] != '\0') {strcpy(tempo3, tempo);} } expression   {   
+			assignment_operator { can_use_func=1; push("=");  if(tempo[0] != '\0') {strcpy(tempo3, tempo);} } expression   {   
 																	  if($1==1 && $4==1) 
 																	  {	
 			                                                          $$=1;
@@ -661,11 +726,13 @@ expression
 
 
 simple_expression 
-			: simple_expression OR_operator and_expression {push("||");} {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
-			| and_expression {if($1 == 1) $$=1; else $$=-1;};
+			:
+			 simple_expression  OR_operator and_expression {push("||");} {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			| 
+			and_expression {if($1 == 1) $$=1; else $$=-1;};
 
 and_expression 
-			: and_expression AND_operator {push("&&");} unary_relation_expression  {	if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			: and_expression  AND_operator {push("&&");} unary_relation_expression  {	if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			  |unary_relation_expression {if($1 == 1) $$=1; else $$=-1;} ;
 
 
@@ -674,23 +741,23 @@ unary_relation_expression
 			| regular_expression {if($1 == 1) $$=1; else $$=-1;} ;
 
 regular_expression 
-			: regular_expression relational_operators sum_expression {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			: regular_expression {can_use_func = 1;} relational_operators sum_expression {can_use_func = 0; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			  | sum_expression {if($1 == 1) $$=1; else $$=-1;} ;
 			
 relational_operators 
 			: greaterthan_assignment_operator {push(">=");} | lessthan_assignment_operator {push("<=");} | greaterthan_operator {push(">");}| lessthan_operator {push("<");}| equality_operator {push("==");}| inequality_operator {push("!=");} ;
 
 sum_expression 
-			: sum_expression sum_operators  term  {if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();    
-				if(print_chk) print_expr=1;}
-			| term {if($1 == 1) $$=1; else $$=-1;  } 
+			: sum_expression {can_use_func = 1;} sum_operators  term  { can_use_func = 0; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();    
+				if(print_chk) print_expr=1; }
+			|  term {if($1 == 1) $$=1; else $$=-1;  } 
 
 sum_operators 
 			: add_operator { push("+"); chk=1; if(!inside) {pc=1; chk2=1;} }
 			| subtract_operator {push("-"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 term
-			: term MULOP  factor { chk = 1 ; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			: term {can_use_func = 1;} MULOP  factor {can_use_func = 0; chk = 1 ; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			| factor {if($1 == 1) $$=1; else $$=-1;} ;
 
 MULOP 
@@ -801,7 +868,7 @@ index:	sum_expression
 													getid_scope(id, curid);
 													printf("%s\n", id);
 												}
-												printf("IF not %s goto L%d \n", temp3, lno);
+												printf("IF not %s GoTo L%d \n", temp3, lno);
 
 												cln(temp1, 100);
 												cln(buffer, 100);
@@ -849,7 +916,7 @@ index:	sum_expression
 													printf("%s < 0\n", id);
 												}
 
-												printf("IF not %s goto L%d\n", temp3, lno);
+												printf("IF not %s GoTo L%d\n", temp3, lno);
 
 													cln(temp1, 100);
 													cln(buffer, 100);
@@ -970,7 +1037,7 @@ index:	sum_expression
 												printf("%s = %s\n", temp4, curval);
 
 												printf("%s = %s < %s \n", temp3, temp2, temp4);
-												printf("IF not %s goto L%d \n", temp3, lno);
+												printf("IF not %s GoTo L%d \n", temp3, lno);
 
 												cln(temp1, 100);
 												cln(buffer, 100);
@@ -1007,7 +1074,7 @@ index:	sum_expression
 
 												printf("%s = %s < 0\n", temp3, temp4);
 
-												printf("IF not %s goto L%d\n", temp3, lno);
+												printf("IF not %s GoTo L%d\n", temp3, lno);
 
 											cln(temp1, 100);
 											cln(buffer, 100);
@@ -1079,12 +1146,19 @@ index:	sum_expression
 
 immutable 
 			: '(' expression ')' {if($2==1) $$=1; else $$=-1;}
-			|  call {if($1==-1) $$=-1; else $$=1; func_called=1;}
+			|  call {	if($1==-1) $$=-1; else $$=1; func_called=1;}
 			| constant {if($1==1) $$=1; else $$=-1; if(print_chk) print_expr=1;};
 
 call
 			:  identifier '('{
 									
+								//	printf("%s 	%c	%d\n\n\n", curid, gettype(curid, 0), yylineno);
+
+									if(can_use_func==1 && gettype(curid, 0) == 'v')	
+									{printf("can't use a function returing void in an expression at line no: %d , quitting...", yylineno);
+										exit(0);
+									}
+
 			             if(!check_declaration(curid, "Function"))
 			             { printf("Function not declared"); exit(0);} 
 			             insertSTF(curid); 
@@ -1116,7 +1190,8 @@ arguments_list
 			: arguments_list ',' exp { call_params_count++; }  
 			| exp { call_params_count++; };
 
-exp : identifier {arggen(1);} | integer_constant {arggen(2);} | string_constant {arggen(3);} | float_constant {arggen(4);} | character_constant {arggen(5);} ;
+exp : identifier {arggen(1); if(!checkscope(curid))
+							{printf("%s used but Undeclared, lineno: %d\n\n",curid, yylineno);exit(0);} } | integer_constant {arggen(2);} | string_constant {arggen(3);} | float_constant {arggen(4);} | character_constant {arggen(5);} ;
 
 constant 
 			: integer_constant 	{  insV(); codegencon(); $$=1; } 
@@ -1189,7 +1264,7 @@ void getid_scope(char id[], char *currid)
 
 	char str[100] = "\0";
 	strcpy(id, currid);
-	strcat(id, "@");
+	strcat(id, "._.");
 	// printf("%s\n\n", tostring(currnest));
 	tostring(str, currnest);
 	strcat(id, str);
@@ -1446,7 +1521,7 @@ void label5()
 	char buffer[100];
 	itoa(label[ltop-1].labelvalue,buffer,10);
 	strcat(temp,buffer);
-	printf("GoTo %s:\n",temp);
+	printf("GoTo %s\n",temp);
 	strcpy(temp,"L");
 	itoa(label[ltop].labelvalue,buffer,10);
 	strcat(temp,buffer);
@@ -1470,7 +1545,9 @@ void arggen(int i)
 {
     if(i==1)
     {
-	printf("refparam %s\n", curid);
+			char id[1000] = "\0";
+			getid_scope(id, curid);
+	printf("refparam %s\n", id);
 	}
 	else
 	{
