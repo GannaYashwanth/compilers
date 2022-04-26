@@ -84,6 +84,7 @@
 	int decl_check=1;
 	int print_expr=0;
 	int can_use_func=0;
+	int func_params_top=0;
 %}
 
 %nonassoc IF
@@ -338,7 +339,10 @@ print_args:
 				{
 					//printf("ttt\n\n\n");
 					print_expr=0;
+					if(temp[0]!='L')
 					printf("print int %s\n", temp);
+					else
+					printf("print int %s\n", tempo2);
 				}
 				else if(tip == 2)
 				{
@@ -405,7 +409,10 @@ print_args:
 				{
 				///	printf("ttt\n\n\n");
 					print_expr=0;
+					if(temp[0]!='L')
 					printf("print int %s\n", temp);
+					else
+					printf("print int %s\n", tempo2);
 				}
 				else if(tip == 2)
 				{
@@ -528,31 +535,27 @@ expression_statment
 			| ';' ;
 
 conditional_statements 
-			: IF '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label2();}  conditional_statements_breakup;
+			: IF '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();if($3!=1);} statement {label2();}  conditional_statements_breakup;
 
 conditional_statements_breakup
 			: ELSE statement {label3();}
 			| {label3();};
 
 iterative_statements 
-			: WHILE '(' { can_use_func = 1; label4();} simple_expression ')' {can_use_func = 0; label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
-			| FOR '(' expression ';' {label4(); can_use_func = 1; }  simple_expression ';' {can_use_func = 0; label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
-			| {label4();}DO statement WHILE '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();label5();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
+			: WHILE '(' { can_use_func = 1; label4();} simple_expression ')' {can_use_func = 0; label1();} statement {label5();} 
+			| FOR '(' expression ';' {label4(); can_use_func = 1; }  simple_expression ';' {can_use_func = 0; label1();} expression ')'statement {label5();} 
+			| {label4();}DO statement WHILE '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();label5();} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}
 				printf("return\n");
 			}
-			| RETURN expression ';' { 	if(!strcmp(currfunctype, "void"))
+			| RETURN sum_expression ';' { 	if(!strcmp(currfunctype, "void"))
 										{ 
 											yyerror("Function is void");
 										}
 
-										if((currfunctype[0]=='i' || currfunctype[0]=='c') && $2!=1)
-										{
-											printf("Expression doesn't match return type of function\n"); exit(0);
-										}
-
-											{printf("return\n");}
+											print_result();
+											
 									};
 
 break_statement 
@@ -749,7 +752,9 @@ relational_operators
 
 sum_expression 
 			: sum_expression {can_use_func = 1;} sum_operators  term  { can_use_func = 0; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();    
-				if(print_chk) print_expr=1; }
+				if(print_chk) print_expr=1; 
+				//	print_temps();
+				}
 			|  term {if($1 == 1) $$=1; else $$=-1;  } 
 
 sum_operators 
@@ -764,7 +769,7 @@ MULOP
 			: multiplication_operator {push("*"); chk=1; if(!inside) {pc=1; chk2=1; }}| division_operator {push("/"); chk=1; if(!inside) {pc=1; chk2=1; }} | modulo_operator {push("%"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 factor 
-			: immutable {top-=0; if($1 == 1) $$=1; else $$=-1;} 
+			: immutable {top-=0; if($1 == 1) $$=1; else $$=-1; } 
 			| mutable {if($1 == 1) $$=1; else $$=-1; called_type=0;} ;
 
 
@@ -1184,14 +1189,13 @@ call
 						 };
 
 arguments 
-			: arguments_list | ;
+			: arguments_list {arggen();} | ;
 
 arguments_list 
 			: arguments_list ',' exp { call_params_count++; }  
 			| exp { call_params_count++; };
 
-exp : identifier {arggen(1); if(!checkscope(curid))
-							{printf("%s used but Undeclared, lineno: %d\n\n",curid, yylineno);exit(0);} } | integer_constant {arggen(2);} | string_constant {arggen(3);} | float_constant {arggen(4);} | character_constant {arggen(5);} ;
+exp :  sum_expression {print_temps();} ;
 
 constant 
 			: integer_constant 	{  insV(); codegencon(); $$=1; } 
@@ -1215,6 +1219,35 @@ struct stack
 	char value[1000];
 	int labelvalue;
 }s[10000],label[10000];
+
+struct func_params{
+	char variable[1000];
+} function_params[100];
+
+void arggen()
+{
+	for(int i=0 ; i<func_params_top ; i++)
+	{
+		printf("param %s\n", function_params[i].variable);
+	}
+
+	func_params_top = 0;
+}
+
+void print_result()
+{
+	printf("return %s\n", s[top].value);
+}
+
+void print_temps()
+{
+	//printf("%d\n\n", func_params_top);
+	strcpy(function_params[func_params_top].variable, s[top].value);
+	strcat(function_params[func_params_top].variable, "\0");
+	func_params_top++;
+	//if(top>=0)
+	//printf("param %s \n", s[top].value);
+}
 
 void tostring(char *str, int num)
 {
@@ -1541,6 +1574,7 @@ void funcgenend()
 	printf("func end\n\n");
 }
 
+/*
 void arggen(int i)
 {
     if(i==1)
@@ -1554,6 +1588,7 @@ void arggen(int i)
 	printf("refparam %s\n", curval);
 	}
 }
+*/
 
 void callgen()
 {
