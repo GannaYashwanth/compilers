@@ -1602,8 +1602,15 @@ void arggen(int i)
 void callgen()
 {
 	printf("refparam result\n");
-	push("$result");
+	strcpy(temp, "t");
+	char buffer[100];
+	itoa(count, buffer, 10);
+	strcat(temp, buffer);
+	count++;
+	push(temp);
 	printf("call %s, %d\n",currfunccall,call_params_count);
+	printf("%s\n", temp);
+	printf("%s = $result\n", temp);
 }
 
 
