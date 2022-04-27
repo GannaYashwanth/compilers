@@ -85,6 +85,7 @@
 	int print_expr=0;
 	int can_use_func=0;
 	int func_params_top=0;
+	int in_call=0, added_temp=0;
 %}
 
 %nonassoc IF
@@ -667,7 +668,7 @@ expression
 			                                                          $$=1;
 			                                                          } 
 			                                                          else 
-			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
+			                                                          {} 
 																																if(func_called && called_type==1)
 																																{
 																																	//printf("hello\n\n");
@@ -1158,7 +1159,7 @@ call
 			:  identifier '('{
 									
 								//	printf("%s 	%c	%d\n\n\n", curid, gettype(curid, 0), yylineno);
-
+									in_call=1;
 									if(can_use_func==1 && gettype(curid, 0) == 'v')	
 									{printf("can't use a function returing void in an expression at line no: %d , quitting...", yylineno);
 										exit(0);
@@ -1177,7 +1178,12 @@ call
                    call_params_count=0;
 			    } 
 			             arguments ')' 
-						 { if(strcmp(currfunccall,"printf"))
+						 { 
+							 if(added_temp)
+							 top--;
+								added_temp=0;
+							 in_call=0;
+							 if(strcmp(currfunccall,"printf"))
 							{ 
 								if(getSTparamscount(currfunccall)!=call_params_count)
 								{	
@@ -1192,7 +1198,8 @@ arguments
 			: arguments_list {arggen();} | ;
 
 arguments_list 
-			: arguments_list ',' exp { call_params_count++; }  
+			: arguments_list ',' {if(added_temp)
+							 top--; added_temp=0;} exp { call_params_count++; }  
 			| exp { call_params_count++; };
 
 exp :  sum_expression {print_temps();} ;
@@ -1338,6 +1345,8 @@ void push(char *x)
 		printf("%s	", s[i].value);
 	}
 	printf("\n\n");*/
+
+	if(in_call)	added_temp=1;
 }
 
 void swap(char *x, char *y)
