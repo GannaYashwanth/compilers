@@ -71,10 +71,12 @@
 	char tempo3[100] = "\0";
 	char decl_id[100] = "\0";
 	char func_assign[100] = "\0";
+	char breakLabel[100] = "\0";
 	
 	char typ;
 	int check = 1;
 	int chk = 0;
+	int another_chk=0;
 	int chk2=0;
 	int tip=3;
 	int print_chk=1;
@@ -86,6 +88,7 @@
 	int can_use_func=0;
 	int func_params_top=0;
 	int in_call=0, added_temp=0;
+
 %}
 
 %nonassoc IF
@@ -93,7 +96,7 @@
 %token RETURN MAIN
 %token VOID
 %token WHILE FOR DO 
-%token BREAK
+%token BREAK CONTINUE
 %token ENDIF
 
 
@@ -317,9 +320,9 @@ io_statement:	scan_stmt
 						|	print_stmt
 						 ;
 
-print_stmt:	PRINTLN '(' {can_use_func=1; } print_args ')' { can_use_func=0; printf("print new line\n");}
+print_stmt:	PRINTLN '(' {another_chk=0; can_use_func=1; } print_args ')' { can_use_func=0; printf("print new line\n");}
 			
-					| PRINT '(' {can_use_func=1;} print_args {can_use_func=0; }')'
+					| PRINT '(' {another_chk=0; can_use_func=1;} print_args {can_use_func=0; }')'
 					;
 
 print_args:	
@@ -340,10 +343,14 @@ print_args:
 				{
 					//printf("ttt\n\n\n");
 					print_expr=0;
-					if(temp[0]!='L')
-					printf("print int %s\n", temp);
+					if(temp[0]!='L' && another_chk!=0)
+					{printf("print int %s\n", temp);
+						another_chk=0;
+					}
 					else
-					printf("print int %s\n", tempo2);
+					{printf("print int %s\n", tempo2);
+						
+					}
 				}
 				else if(tip == 2)
 				{
@@ -410,10 +417,14 @@ print_args:
 				{
 				///	printf("ttt\n\n\n");
 					print_expr=0;
-					if(temp[0]!='L')
-					printf("print int %s\n", temp);
+				//	printf("%d\n\n", another_chk);
+					if(temp[0]!='L' && another_chk!=0)
+					{printf("print int %s\n", temp);
+					another_chk=0;
+					}
 					else
-					printf("print int %s\n", tempo2);
+					{printf("print int %s\n", tempo2);	
+					}
 				}
 				else if(tip == 2)
 				{
@@ -543,8 +554,8 @@ conditional_statements_breakup
 			| {label3();};
 
 iterative_statements 
-			: WHILE '(' { can_use_func = 1; label4();} simple_expression ')' {can_use_func = 0; label1();} statement {label5();} 
-			| FOR '(' expression ';' {label4(); can_use_func = 1; }  simple_expression ';' {can_use_func = 0; label1();} expression ')'statement {label5();} 
+			: WHILE '(' { can_use_func = 1; label4(); breakLabel[0] = '\0';} simple_expression ')' {can_use_func = 0; label1();} statement {label5(); breakLabel[0] = '\0';} 
+			| FOR '(' expression ';' {label4(); can_use_func = 1; breakLabel[0] = '\0';}  simple_expression ';' {can_use_func = 0; label1();} expression ')'statement {label5(); breakLabel[0] = '\0'; } 
 			| {label4();}DO statement WHILE '(' {can_use_func = 1; } simple_expression ')' {can_use_func = 0; label1();label5();} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}
@@ -560,7 +571,9 @@ return_statement
 									};
 
 break_statement 
-			: BREAK ';' ;
+			: BREAK ';' {printf("GoTo %s\n", breakLabel);} 
+			|	CONTINUE ';' 
+
 
 string_initilization
 			: assignment_operator string_constant {insV();} ;
@@ -759,15 +772,15 @@ sum_expression
 			|  term {if($1 == 1) $$=1; else $$=-1;  } 
 
 sum_operators 
-			: add_operator { push("+"); chk=1; if(!inside) {pc=1; chk2=1;} }
-			| subtract_operator {push("-"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
+			: add_operator { push("+"); another_chk=1; chk=1; if(!inside) {pc=1; chk2=1;} }
+			| subtract_operator {push("-");another_chk=1; chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 term
-			: term {can_use_func = 1;} MULOP  factor {can_use_func = 0; chk = 1 ; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
+			: term {can_use_func = 1;} MULOP  factor {can_use_func = 0;another_chk=1; chk = 1 ; if($1 == 1 && $3==1) $$=1; else $$=-1; codegen();}
 			| factor {if($1 == 1) $$=1; else $$=-1;} ;
 
 MULOP 
-			: multiplication_operator {push("*"); chk=1; if(!inside) {pc=1; chk2=1; }}| division_operator {push("/"); chk=1; if(!inside) {pc=1; chk2=1; }} | modulo_operator {push("%"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
+			: multiplication_operator {push("*");another_chk=1; chk=1; if(!inside) {pc=1; chk2=1; }}| division_operator {push("/"); chk=1; if(!inside) {pc=1; chk2=1; }} | modulo_operator {push("%"); chk=1; if(!inside) {pc=1; chk2=1;} } ;
 
 factor 
 			: immutable {top-=0; if($1 == 1) $$=1; else $$=-1; } 
@@ -897,7 +910,7 @@ index:	sum_expression
 												printf("la %s %s \n", temp3, temp1);
 												printf("print string %s \n", temp3);
 
-												printf("exit \n");
+												printf("$exit \n");
 
 												printf("L%d: \n", lno++);
 
@@ -945,7 +958,7 @@ index:	sum_expression
 												printf("la %s %s \n", temp3, temp1);
 												printf("print string %s \n", temp3);
 
-												printf("exit\n");
+												printf("$exit\n");
 												printf("L%d: \n", lno++);
 
 												cln(temp3, 100);
@@ -1066,7 +1079,7 @@ index:	sum_expression
 												printf("la %s %s \n", temp3, temp1);
 												printf("print string %s \n", temp3);
 
-												printf("exit \n");
+												printf("$exit \n");
 
 												printf("L%d: \n", lno++);
 
@@ -1103,7 +1116,7 @@ index:	sum_expression
 												printf("la %s %s \n", temp3, temp1);
 												printf("print string %s \n", temp3);
 
-												printf("exit\n");
+												printf("$exit\n");
 												printf("L%d: \n", lno++);
 												
 												cln(temp3, 100);
@@ -1151,7 +1164,7 @@ index:	sum_expression
 
 
 immutable 
-			: '(' expression ')' {if($2==1) $$=1; else $$=-1;}
+			: '(' expression ')' { if($2==1) $$=1; else $$=-1;}
 			|  call {	if($1==-1) $$=-1; else $$=1; func_called=1;}
 			| constant {if($1==1) $$=1; else $$=-1; if(print_chk) print_expr=1;};
 
@@ -1244,6 +1257,7 @@ void arggen()
 void print_result()
 {
 	printf("return %s\n", s[top].value);
+	top--;
 }
 
 void print_temps()
@@ -1517,6 +1531,11 @@ void label1()
 	itoa(lno,buffer,10);
 	strcat(temp,buffer);
 	printf("IF not %s GoTo %s\n",s[top].value,temp);
+	if(breakLabel[0] == '\0')
+	{
+		strcat(temp, "\0");
+		strcpy(breakLabel, temp);
+	}
 	label[++ltop].labelvalue = lno++;
 }
 

@@ -515,24 +515,25 @@ IN "include"
 "scan"/\(.*\)		{return SCAN;}
 "println"/\(.*\)	{return PRINTLN;}
 "print"/\(.*\)	{return PRINT;}
-"char"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword");return CHAR;}
-"double"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return DOUBLE;}
-"else"			{ insertST(yytext, "Keyword"); return ELSE;}
-"float"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return FLOAT;}
-"while"			{ insertST(yytext, "Keyword"); return WHILE;}
-"do"			{ insertST(yytext, "Keyword"); return DO;}
-"for"			{ insertST(yytext, "Keyword"); return FOR;}
-"if"			{ insertST(yytext, "Keyword"); return IF;}
-"int"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return INT;}
-"long"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return LONG;}
+"char"			{ strcpy(curtype,yytext); return CHAR;}
+"double"		{ strcpy(curtype,yytext);  return DOUBLE;}
+"else"			{ return ELSE;}
+"float"			{ strcpy(curtype,yytext);  return FLOAT;}
+"while"			{  return WHILE;}
+"do"			{  return DO;}
+"for"			{  return FOR;}
+"if"			{  return IF;}
+"int"			{ strcpy(curtype,yytext);  return INT;}
+"long"			{ strcpy(curtype,yytext);  return LONG;}
 "return"		{ insertST(yytext, "Keyword"); return RETURN;}
-"short"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return SHORT;}
-"signed"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return SIGNED;}
-"sizeof" 		{ insertST(yytext, "Keyword"); return SIZEOF;}
-"struct"		{ strcpy(curtype,yytext);   insertST(yytext, "Keyword");  return STRUCT;}
-"unsigned"		{ insertST(yytext, "Keyword");   return UNSIGNED;}
-"void"			{ strcpy(curtype,yytext);   insertST(yytext, "Keyword");  return VOID;}
-"break"			{ insertST(yytext, "Keyword");  return BREAK;}
+"short"			{ strcpy(curtype,yytext);  return SHORT;}
+"signed"		{ strcpy(curtype,yytext);  return SIGNED;}
+"sizeof" 		{  return SIZEOF;}
+"struct"		{ strcpy(curtype,yytext);     return STRUCT;}
+"unsigned"		{ return UNSIGNED;}
+"void"			{ strcpy(curtype,yytext);     return VOID;}
+"break"			{ return BREAK;}
+"continue"  {return CONTINUE;}
 
 
 
